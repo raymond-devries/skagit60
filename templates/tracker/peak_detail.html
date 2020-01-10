@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load define_action %}
+
+{% block content %}
+    {% if peak.complete %}
+        {% define "completed-peak" as completed %}
+    {% else %}
+        {% define "uncompleted-peak" as completed %}
+    {% endif %}
+    <h1 class="text-center py-1 px-3 m-3 mx-auto {{ completed }}">{{ peak }}</h1>
+    <ul>
+        <li>
+            Completed:
+            {% if peak.complete %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </li>
+        <li>Latitude: {{ peak.lat }}</li>
+        <li>Longitude: {{ peak.long }}</li>
+        <li>Elevation: {{ peak.elevation }}ft</li>
+        <li><a href="{{ peak.peakbagger_link }}">PeakBagger Link</a></li>
+    </ul>
+{% endblock content %}

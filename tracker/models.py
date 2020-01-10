@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator
 
 class Peak(models.Model):
     name = models.CharField(max_length=50)
+    display_name = models.CharField(max_length=50, default=name)
     elevation = models.PositiveIntegerField()
     lat = models.DecimalField(decimal_places=5, max_digits=8)
     long = models.DecimalField(decimal_places=5, max_digits=8)
