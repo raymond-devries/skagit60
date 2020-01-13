@@ -20,24 +20,42 @@
 </head>
 <body class="text-white">
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgb(42,86,105)">
-  <a class="navbar-brand" href="{% url 'home' %}">Skagit 60</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <a class="navbar-brand" href="{% url 'home' %}">Skagit 60</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'home' %}">Home </a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-    </ul>
-  </div>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'home' %}">Home </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav my-2 my-lg-0">
+            {% if user.is_authenticated %}
+                <li class="nav-item active"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                <li class="nav-item active"><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
+            {% else %}
+                <li class="nav-item active"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
 </nav>
-{% block content %}
-{% endblock %}
+
+<div class="space">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
 <div class="p-5"></div>
 </body>
 </html>

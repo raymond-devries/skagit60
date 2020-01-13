@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        <h6>Username: {{ user.username }}</h6>
+        <h6>Email: {{ user.email }}</h6>
+        <form>
+            <button type="submit" formaction="{% url 'edit_profile' %}" class="submit-button">Edit Profile</button>
+        </form>
+        <hr>
+        <small class="my-3">Go back <a href="{% url 'home' %}">Home</a></small>
+    </div>
+{% endblock content %}

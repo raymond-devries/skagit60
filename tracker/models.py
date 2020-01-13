@@ -21,17 +21,9 @@ class Tick(models.Model):
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
 
 
-class PlannedTrip(models.Model):
-    trip_leader = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    note = models.TextField()
-
-
-class PlannedTripParticipant(models.Model):
+class InterestedParticipant(models.Model):
     climber = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    planned_trip = models.ForeignKey(PlannedTrip, on_delete=models.CASCADE)
+    peak = models.ForeignKey(Peak, on_delete=models.CASCADE)
     message = models.TextField()
 
 

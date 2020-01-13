@@ -4,19 +4,22 @@
 
 {% block content %}
     <div>
-        <h2 class="mt-3 text-center">Peaks Completed</h2>
+        <h2 class="text-center">Peaks Completed</h2>
         <h1 class="text-center">{{ number_of_peaks_completed }}/60</h1>
         <hr>
-        <ul>
+        <ul class="list-of-peaks mx-2">
             {% for peak in peaks %}
                 {% if peak.complete %}
                     {% define "completed-peak" as completed %}
                 {% else %}
                     {% define "uncompleted-peak" as completed %}
                 {% endif %}
-                <a href="{% url 'peak_detail' pk=peak.pk %}" class="remove-link-style">
-                    <li class="py-1 px-2 my-3 peaks {{ completed }}">{{ peak.id }}. {{ peak }}</li>
-                </a>
+                <li class="my-4 peaks">
+                    <a href="{% url 'peak_detail' pk=peak.pk %}" class="remove-link-style py-2 px-3 {{ completed }}">
+                        {{ peak.id }}. {{ peak }}
+                    </a>
+                </li>
+
             {% endfor %}
         </ul>
     </div>

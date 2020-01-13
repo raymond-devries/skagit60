@@ -16,3 +16,5 @@ class Home(ListView):
 
 class PeakDetail(DetailView):
     model = Peak
+
+
