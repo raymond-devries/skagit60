@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load define_action %}
+
+{% block content %}
+    <div class="m-4 desktop-width">
+        <h2>Sign Up</h2>
+        <small>
+            Sign up is limited to Skagit Alpine Club members. You must be an active member and have an email address
+            on file with the Skagit Alpine Club to Sign Up.
+        </small>
+        <hr>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="submit-button my-2">Sign Up</button>
+        </form>
+        <div>
+            <small>
+                Already have an account? <a href="{% url 'login' %}">Login</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}

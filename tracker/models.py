@@ -1,6 +1,7 @@
 from django.db import models
-from users.models import Profile
+from users.models import User
 from django.core.validators import MaxValueValidator
+from django.contrib.auth.models import User
 
 
 class Peak(models.Model):
@@ -17,12 +18,12 @@ class Peak(models.Model):
 
 
 class Tick(models.Model):
-    climber = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    climber = models.ForeignKey(User, on_delete=models.PROTECT)
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
 
 
 class InterestedParticipant(models.Model):
-    climber = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    climber = models.ForeignKey(User, on_delete=models.CASCADE)
     peak = models.ForeignKey(Peak, on_delete=models.CASCADE)
     message = models.TextField()
 
@@ -37,7 +38,7 @@ class TripReport(models.Model):
 
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
     published = models.BooleanField(default=False)
-    writer = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    writer = models.ForeignKey(User, on_delete=models.PROTECT)
     permits = models.CharField(null=True, default=None, max_length=150)
     overnight = models.BooleanField(default=False)
     start = models.DateTimeField(auto_now_add=True)
@@ -63,7 +64,7 @@ class ReportTime(models.Model):
 
 
 class ReportComment(models.Model):
-    user = models.ForeignKey(Profile, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 

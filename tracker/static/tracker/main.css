@@ -57,7 +57,7 @@ hr {
 }
 
 @media only screen and (min-width: 800px) {
-    .forms {
-        max-width: 400px;
+    .desktop-width {
+        max-width: 500px;
     }
 }
