@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="desktop-width">
-        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        <h3><b>{{ user.first_name }} {{ user.last_name }}</b></h3>
         <h6>Username: {{ user.username }}</h6>
         <h6>Email: {{ user.email }}</h6>
         <form>
@@ -15,6 +15,29 @@
                 Change Password
             </button>
         </form>
+        <hr>
+        <h3><b>Ticks</b></h3>
+        {% if ticks.exists %}
+            {% for tick in ticks %}
+                <h5>{{ tick.peak.display_name }} {{ tick.date }}-
+                    <small><a href="{% url 'tick_delete' pk=tick.pk %}">Delete</a></small>
+                </h5>
+            {% endfor %}
+        {% else %}
+            <h5>You haven't ticked any peaks. Go out and climb something!</h5>
+        {% endif %}
+        <hr>
+        <h3><b>Trip Reports</b></h3>
+        {% if ticks.exists %}
+            {% for trip_report in trip_reports %}
+                <h5>{{ trip_report.peak.display_name }} {{ trip_report.start }}-
+                    <small><a href="{% url 'trip_report_delete' pk=trip_report.pk %}">Delete</a></small>
+                    <small><a href="{% url 'trip_report_update' pk=trip_report.pk %}">Edit</a></small>
+                </h5>
+            {% endfor %}
+        {% else %}
+            <h5>You haven't ticked any peaks. Go out and climb something!</h5>
+        {% endif %}
         <hr>
         <small class="my-3">Go back <a href="{% url 'home' %}">Home</a></small>
     </div>

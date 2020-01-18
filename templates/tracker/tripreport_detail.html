@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load define_action %}
+
+{% block content %}
+    <div class="text-center">
+        <h5><b>Trip Report</b></h5>
+        <h2>{{ tripreport.peak }}</h2>
+        <h4>{{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}</h4>
+        <h6>{{ tripreport.start.month }}/{{ tripreport.start.day }}/{{ tripreport.start.year }}
+            {% if show_end %}
+                - {{ tripreport.end.month }}/{{ tripreport.end.day }}/{{ tripreport.end.year }}</h6>
+            {% endif %}
+    </div>
+    <hr>
+    <div class="d-lg-flex justify-content-around">
+        <div class="desktop-width">
+            {% if tripreport.permits is not None %}
+                <p>Permits: {{ tripreport.permits }}</p>
+            {% endif %}
+            <p>Difficulty: {{ tripreport.get_difficulty_display }}</p>
+            {% if tripreport.route_name is not None %}
+                <p>Route Name: {{ tripreport.route_name }}</p>
+            {% endif %}
+            {% if tripreport.snow_level is not None %}
+                <p>Snow Level: {{ tripreport.snow_level }} ft</p>
+            {% endif %}
+            {% if tripreport.gear != '' %}
+                <p>Gear: {{ tripreport.gear }}</p>
+            {% endif %}
+            <p>
+            {% for time in times %}
+                From {{ time.get_start_point_display }} to {{ time.get_end_point_display }}: {{ time.time }} hours <br>
+            {% endfor %}
+            </p>
+            {% if tripreport.weather != '' %}
+                <p>Weather: {{ tripreport.weather }}</p>
+            {% endif %}
+            {% if tripreport.report != ''%}
+                <p>{{ tripreport.report }}</p>
+            {% endif %}
+        </div>
+        <div>
+            <h4><b>Info</b></h4>
+            <li>Latitude: {{ tripreport.peak.lat }}</li>
+            <li>Longitude: {{ tripreport.peak.long }}</li>
+            <li>Elevation: {{ tripreport.peak.elevation }}ft</li>
+            <li><a href="{{ tripreport.peak.peakbagger_link }}">PeakBagger Link</a></li>
+        </div>
+    </div>
+
+
+
+{% endblock content %}
