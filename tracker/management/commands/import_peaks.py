@@ -14,6 +14,7 @@ class Command(BaseCommand):
         for index, row in peaks_df.iterrows():
             Peak.objects.get_or_create(
                 name=row['Mountain'],
+                display_name=row["Cleaned Name"],
                 elevation=row['Elevation'],
                 lat=row['Latitude'],
                 long=row['Longitude'],

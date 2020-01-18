@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, EmailField, CharField
+from django.forms import EmailField, CharField
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, UsernameField
 from .models import ValidEmail
@@ -31,6 +31,9 @@ class SignupForm(UserCreationForm):
 
 class ProfileForm(UserChangeForm):
     password = None
+    email = EmailField(max_length=254)
+    first_name = CharField(max_length=50)
+    last_name = CharField(max_length=50)
 
     class Meta:
         model = User

@@ -2,6 +2,8 @@ from django.db import models
 from users.models import User
 from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 class Peak(models.Model):
@@ -20,12 +22,30 @@ class Peak(models.Model):
 class Tick(models.Model):
     climber = models.ForeignKey(User, on_delete=models.PROTECT)
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
+    date = models.DateField(help_text='The date you summited the peak.')
+
+    def __str__(self):
+        return self.climber.first_name + ' ' + self.climber.last_name + ', ' + str(self.peak)
+
+
+@receiver(post_save, sender=Tick)
+def mark_peak_as_complete(instance, created, **kwargs):
+    if created:
+        instance.peak.complete = True
+        instance.peak.save()
+
+
+@receiver(post_delete, sender=Tick)
+def mark_peak_as_incomplete(sender, instance, **kwargs):
+    if not sender.objects.filter(peak=instance.peak).exists():
+        instance.peak.complete = False
+        instance.peak.save()
 
 
 class InterestedParticipant(models.Model):
     climber = models.ForeignKey(User, on_delete=models.CASCADE)
     peak = models.ForeignKey(Peak, on_delete=models.CASCADE)
-    message = models.TextField()
+    message = models.TextField(max_length=400)
 
 
 class TripReport(models.Model):
@@ -37,18 +57,20 @@ class TripReport(models.Model):
     ]
 
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
-    published = models.BooleanField(default=False)
+    published = models.BooleanField(default=True)
     writer = models.ForeignKey(User, on_delete=models.PROTECT)
-    permits = models.CharField(null=True, default=None, max_length=150)
-    overnight = models.BooleanField(default=False)
-    start = models.DateTimeField(auto_now_add=True)
-    end = models.DateTimeField(auto_now_add=True)
+    permits = models.CharField(null=True, blank=True, default=None, max_length=150)
+    start = models.DateField(null=True, blank=True)
+    end = models.DateField(null=True, blank=True)
     difficulty = models.IntegerField(choices=difficulty_choices, default=1)
-    route_name = models.CharField(max_length=150, null=True)
-    snow_level = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True)
-    weather = models.TextField(null=True)
-    gear = models.TextField(null=True)
-    report = models.TextField(null=True)
+    route_name = models.CharField(max_length=150, null=True, blank=True)
+    snow_level = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
+    weather = models.TextField(null=True, blank=True)
+    gear = models.TextField(null=True, blank=True)
+    report = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.peak)
 
 
 class ReportTime(models.Model):

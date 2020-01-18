@@ -5,13 +5,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import View
-from django.views.generic.edit import UpdateView
 from .forms import *
 from .tokens import account_activation_token
+from tracker.models import Tick, TripReport
 
 
 class CustomLogin(LoginView):
@@ -74,7 +73,10 @@ class Activate(View):
 class Profile(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'users/profile.html', {'user': request.user})
+        ticks = Tick.objects.filter(climber=request.user)
+        trip_reports = TripReport.objects.filter(writer=request.user)
+        return render(request, 'users/profile.html',
+                      {'user': request.user, 'ticks': ticks, 'trip_reports': trip_reports})
 
 
 class EditProfile(LoginRequiredMixin, View):
@@ -93,7 +95,3 @@ class EditProfile(LoginRequiredMixin, View):
 
         else:
             return render(request, 'users/edit_profile.html', {'form': form})
-
-
-
-

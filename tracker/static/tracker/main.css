@@ -1,14 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
 
-body{
+body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
     background-color: #242326;
 }
+
 hr {
     border: 1px solid #DADCDE;
     border-radius: 1px;
 }
+
 
 .space {
     margin: 20px 6%;
@@ -24,7 +26,7 @@ hr {
 }
 
 .submit-button {
-    background-color: rgb(42,86,105);
+    background-color: rgb(42, 86, 105);
     border: none;
     color: white;
     border-radius: 5px;
@@ -56,8 +58,23 @@ hr {
     list-style-type: none;
 }
 
-@media only screen and (min-width: 800px) {
+/*Peak Detail*/
+.list-detail {
+    font-size: 20px;
+}
+
+@media only screen and (min-width: 992px) {
     .desktop-width {
         max-width: 500px;
     }
+
+}
+
+@media only screen and (min-width: 1250px) {
+    .max-width {
+        max-width: 1150px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
 }
