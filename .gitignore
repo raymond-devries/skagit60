@@ -1,2 +1,6 @@
 db.sqlite3
 venv
+.env
+mediafiles
+docker-compose.yml
+Dockerfile
