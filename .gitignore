@@ -1,6 +1,5 @@
-db.sqlite3
-venv
-.env
-mediafiles
-docker-compose.yml
-Dockerfile
+/db.sqlite3
+/venv
+/mediafiles
+/.env
+/.env.docker
