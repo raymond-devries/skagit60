@@ -12,4 +12,4 @@ RUN apt-get -y install python-certbot-nginx
 ADD start.sh /
 RUN chmod +x /start.sh
 
-CMD ["/start.sh"]
+#CMD ["/start.sh"]
