@@ -17,13 +17,17 @@ services:
       - 8000
     depends_on:
       - db
+
   nginx:
-    build: ./nginx
+    build:
+      ./nginx
     ports:
-      - 80:80
+      - 1337:80
+    volumes:
+    - certs:/etc/letsencrypt/
     depends_on:
       - web
 
-
 volumes:
   postgres_data:
+  certs:
