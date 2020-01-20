@@ -11,4 +11,4 @@ RUN apt-get -y install python-certbot-nginx
 
 CMD ["nginx", "-g", "daemon off;"]
 CMD certbot --nginx --test-cert --keep-until-expiring --email $EMAIL --agree-tos -n -d skgit60.com -d www.skagit60.com
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]
