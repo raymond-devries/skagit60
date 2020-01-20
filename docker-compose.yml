@@ -25,6 +25,7 @@ services:
       - 80:80
     volumes:
     - certs:/etc/letsencrypt/
+    - nginx_conf:/etc/nginx/
     depends_on:
       - web
     env_file:
@@ -33,3 +34,4 @@ services:
 volumes:
   postgres_data:
   certs:
+  nginx_conf:
