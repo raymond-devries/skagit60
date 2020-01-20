@@ -3,3 +3,4 @@
 /mediafiles
 /.env
 /.env.docker
+production_env
