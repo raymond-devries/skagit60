@@ -22,7 +22,7 @@ services:
     build:
       ./nginx
     ports:
-      - 1337:80
+      - 80:80
     volumes:
     - certs:/etc/letsencrypt/
     depends_on:
