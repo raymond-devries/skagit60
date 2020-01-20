@@ -27,6 +27,8 @@ services:
     - certs:/etc/letsencrypt/
     depends_on:
       - web
+    env_file:
+      - ./.env.docker
 
 volumes:
   postgres_data:
