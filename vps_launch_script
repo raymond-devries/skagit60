@@ -1,0 +1,8 @@
+sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get dist-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'
+sudo addgroup --system docker
+sudo adduser $USER docker
+sudo newgrp docker
+sudo snap install docker
+sudo usermod -a -G docker ubuntu
+
+certbot --nginx -d skagit60.com -d www.skagit60.com -d skagit60.skagitalpineclub.com -d www.skagit60.skagitalpineclub.com

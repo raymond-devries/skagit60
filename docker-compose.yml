@@ -1,22 +1,14 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.docker
-
   web:
     build: .
     command: gunicorn skagit60.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .:/code
+      - db:/code/db/
     expose:
       - 8000
-    depends_on:
-      - db
+    restart: unless-stopped
 
   nginx:
     build:
@@ -29,10 +21,9 @@ services:
     - nginx_conf:/etc/nginx/
     depends_on:
       - web
-    env_file:
-      - ./.env.docker
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
+  db:
   certs:
   nginx_conf:
