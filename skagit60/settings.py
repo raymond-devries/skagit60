@@ -26,6 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'tracker',
     'users',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
