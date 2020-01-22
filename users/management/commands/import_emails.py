@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Imports valid emails'
 
     def handle(self, *args, **options):
-        file_path = dirname(__file__) + '/contacts.csv'
+        file_path = dirname(dirname(dirname(dirname(__file__)))) + '/production_env/contacts.csv'
         contacts = pd.read_csv(file_path)
         contacts = contacts['email']
         contacts = contacts.str.lower()

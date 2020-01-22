@@ -85,6 +85,11 @@ class ReportTime(models.Model):
     time = models.DecimalField(decimal_places=1, max_digits=3)
 
 
+class ReportImages(models.Model):
+    trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
+    image = models.ImageField()
+
+
 class ReportComment(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
