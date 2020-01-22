@@ -56,8 +56,8 @@ class TripReport(models.Model):
         (4, 'Epic')
     ]
 
-    peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
-    published = models.BooleanField(default=True)
+    peak = models.ForeignKey(Peak, on_delete=models.PROTECT, null=True)
+    published = models.BooleanField(default=False)
     writer = models.ForeignKey(User, on_delete=models.PROTECT)
     permits = models.CharField(null=True, blank=True, default=None, max_length=150)
     start = models.DateField(null=True, blank=True)

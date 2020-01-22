@@ -3,12 +3,20 @@
 {% load define_action %}
 
 {% block content %}
-    <div class="m-4">
-        <h2>Edit Trip Report</h2>
-        <form method="post" class="desktop-width">
+    <div class="m-4 desktop-width">
+        <h2>Trip Report</h2>
+        <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="submit-button my-2">Update Report</button>
+            <button type="submit" class="submit-button my-2">Save Report</button>
         </form>
+        {% if tripreport.peak is not None %}
+        <form>
+            <button type="submit" formaction="{% url 'trip_report_delete' pk=tripreport.pk %}"
+                    class="submit-button delete-color my-3">
+                Delete Report
+            </button>
+        </form>
+        {% endif %}
     </div>
 {% endblock content %}

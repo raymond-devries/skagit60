@@ -34,6 +34,10 @@ hr {
     width: 100%;
 }
 
+.delete-color {
+    background-color: #780700;
+}
+
 .uncompleted-peak {
     background-color: #780700;
     width: fit-content;

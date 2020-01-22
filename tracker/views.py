@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, FormView, DeleteView, UpdateView
+from django.views.generic import ListView, DetailView, FormView, DeleteView, UpdateView, View
 from tracker.models import *
 from .forms import *
 
@@ -43,15 +45,15 @@ class TripReportDetail(DetailView):
         return context
 
 
-class TripReportCreate(LoginRequiredMixin, FormView):
+class TripReportCreate(LoginRequiredMixin, View):
     form_class = TripReportForm
-    template_name = 'tracker/tripreport_create.html'
-    success_url = reverse_lazy('home')
 
-    def form_valid(self, form):
-        form.instance.writer = self.request.user
-        form.save()
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        # an instance must be created to ensure that apis that add related models will work during trip report creation
+        user = self.request.user
+        trip_report = TripReport(writer=user)
+        trip_report.save()
+        return redirect('trip_report_update', pk=trip_report.pk)
 
 
 class TripReportUpdate(LoginRequiredMixin, UpdateView):

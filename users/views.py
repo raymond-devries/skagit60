@@ -73,10 +73,18 @@ class Activate(View):
 class Profile(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
+        # since users can create trip reports without a peak associated,
+        # they need to be deleted to avoid user confusion
+        # a trip report filled in by the user will not contain a peak since it is a required field on the form
+        self.delete_empty_trip_reports()
         ticks = Tick.objects.filter(climber=request.user)
         trip_reports = TripReport.objects.filter(writer=request.user)
         return render(request, 'users/profile.html',
                       {'user': request.user, 'ticks': ticks, 'trip_reports': trip_reports})
+
+    def delete_empty_trip_reports(self):
+        reports_to_delete = TripReport.objects.filter(writer=self.request.user, peak=None)
+        reports_to_delete.delete()
 
 
 class EditProfile(LoginRequiredMixin, View):

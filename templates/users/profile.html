@@ -28,15 +28,15 @@
         {% endif %}
         <hr>
         <h3><b>Trip Reports</b></h3>
-        {% if ticks.exists %}
+        {% if trip_reports.exists %}
             {% for trip_report in trip_reports %}
                 <h5>{{ trip_report.peak.display_name }} {{ trip_report.start }}-
-                    <small><a href="{% url 'trip_report_delete' pk=trip_report.pk %}">Delete</a></small>
                     <small><a href="{% url 'trip_report_update' pk=trip_report.pk %}">Edit</a></small>
+                    <small><a href="{% url 'trip_report_delete' pk=trip_report.pk %}">Delete</a></small>
                 </h5>
             {% endfor %}
         {% else %}
-            <h5>You haven't ticked any peaks. Go out and climb something!</h5>
+            <h5>You haven't submitted any trip reports. Go out and climb something and submit one!</h5>
         {% endif %}
         <hr>
         <small class="my-3">Go back <a href="{% url 'home' %}">Home</a></small>
