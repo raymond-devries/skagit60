@@ -45,6 +45,10 @@ hr {
     max-width: 85%;
 }
 
+.small-delete {
+    width: auto;
+}
+
 .completed-peak {
     background-color: #007856;
     width: fit-content;
@@ -69,7 +73,7 @@ hr {
 
 @media only screen and (min-width: 992px) {
     .desktop-width {
-        max-width: 500px;
+        max-width: 700px;
     }
 
 }

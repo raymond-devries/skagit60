@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.core import serializers
+import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -63,6 +65,30 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return TripReport.objects.filter(pk=self.kwargs['pk'], writer=self.request.user)
+
+    def form_valid(self, form):
+        trip_report = form.save(commit=False)
+        if 'publish_report' in self.request.POST:
+            trip_report.published = True
+        trip_report.save()
+        return redirect('profile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        report = self.get_object()
+        times = ReportTime.objects.filter(trip_report=report)
+        times_dict = {}
+        for time in times:
+            times_dict[time.id] = \
+                {'start_point_display': time.get_start_point_display(),
+                 'end_point_display': time.get_end_point_display(),
+                 'time': str(time.time),
+                 'id': time.id}
+        
+        context['times'] = json.dumps(times_dict)
+        context['time_choices'] = json.dumps(ReportTime._meta.get_field('start_point').choices)
+
+        return context
 
 
 class TripReportDelete(LoginRequiredMixin, DeleteView):

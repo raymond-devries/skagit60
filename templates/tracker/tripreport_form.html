@@ -5,18 +5,100 @@
 {% block content %}
     <div class="m-4 desktop-width">
         <h2>Trip Report</h2>
+        <hr>
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="submit-button my-2">Save Report</button>
+            <hr>
+            <div id="app">
+                <h5><b>Times</b></h5>
+                <div v-for="time in times" class="mb-3 d-flex align-items-center">
+                    <h5 class="mr-3">
+                        [[ time.start_point_display ]] to [[ time.end_point_display ]]: [[ time.time ]] hours
+                    </h5>
+                    <button type="button" class="delete-color submit-button small-delete"><b
+                            v-on:click="deleteTime(time.id)">
+                        Delete</b>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="start_point_input">Start Point*</label>
+                            <select id="start_point_input" class="form-control" v-model="start_point">
+                                <option v-for="choice in time_choices" :value="choice[0]">[[ choice[1] ]]</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="end_point_input">End Point*</label>
+                            <select id="end_point_input" class="form-control" v-model="end_point">
+                                <option v-for="choice in time_choices" :value="choice[0]">[[ choice[1] ]]</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label for="time_input">Time taken in hours*</label>
+                    <input type="number" class="form-control" id="time_input" v-model="hours"
+                           v-on:keypress.enter.prevent v-on:keypress.enter="addTime">
+                </div>
+                <button type="button" class="submit-button" v-on:click="addTime">
+                    Add Time
+                </button>
+            </div>
+            <hr>
+            {% if tripreport.published %}
+                <input type="submit" class="submit-button my-2" name="save_report" value="Save Report">
+            {% else %}
+                <input type="submit" class="submit-button my-2" name="save_report" value="Save Draft">
+                <input type="submit" class="submit-button my-2" name="publish_report" value="Publish Report">
+            {% endif %}
         </form>
         {% if tripreport.peak is not None %}
-        <form>
-            <button type="submit" formaction="{% url 'trip_report_delete' pk=tripreport.pk %}"
-                    class="submit-button delete-color my-3">
-                Delete Report
-            </button>
-        </form>
+            <form>
+                <button type="submit" formaction="{% url 'trip_report_delete' pk=tripreport.pk %}"
+                        class="submit-button delete-color my-3">
+                    Delete Report
+                </button>
+            </form>
         {% endif %}
     </div>
+    <script type="text/javascript">
+        let app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                id: {{ tripreport.id }},
+                times: {{ times|safe }},
+                time_choices: {{ time_choices|safe }},
+                api: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/report_time/'),
+                start_point: 'TH',
+                end_point: 'C',
+                hours: null,
+            },
+            methods: {
+                deleteTime: function (time_id) {
+                    axios.delete(this.api + time_id)
+                        .then(this.$delete(this.times, time_id))
+                        .catch(function (error) {
+                            console.log(error)
+                        })
+                },
+                addTime: function () {
+                    console.log(this.api);
+                    axios.post(this.api,
+                        {
+                            'start_point': this.start_point,
+                            'end_point': this.end_point,
+                            'time': this.hours,
+                            'trip_report': this.id
+                        })
+                        .then(
+                            response => this.$set(this.times, response.data.id, response.data)
+                        ).then(
+                        this.hours = null
+                    )
+                }
+            }
+        })
+    </script>
 {% endblock content %}
+

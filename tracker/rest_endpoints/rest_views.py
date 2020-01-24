@@ -5,3 +5,8 @@ from .serializers import *
 class ReportTimeViewSet(ModelViewSet):
     queryset = ReportTime.objects.all()
     serializer_class = ReportTimeSerializer
+
+
+class ReportImageViewSet(ModelViewSet):
+    queryset = ReportImage.objects.all()
+    serializer_class = ReportImageSerializer

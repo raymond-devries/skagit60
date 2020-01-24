@@ -4,3 +4,4 @@ db.sqlite3
 /.env
 /.env.docker
 production_env
+node_modules
