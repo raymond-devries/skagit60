@@ -88,7 +88,7 @@ class ReportTime(models.Model):
 
 class ReportImage(models.Model):
     trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/trip_reports')
+    image = models.ImageField(upload_to='images/trip_reports', null=True)
 
 
 @receiver(pre_save, sender=ReportImage)

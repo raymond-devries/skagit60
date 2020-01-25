@@ -1,4 +1,4 @@
-from rest_framework.fields import CharField
+from rest_framework.fields import CharField, ImageField
 from rest_framework.serializers import ModelSerializer
 from tracker.models import ReportTime, ReportImage
 
@@ -13,6 +13,7 @@ class ReportTimeSerializer(ModelSerializer):
 
 
 class ReportImageSerializer(ModelSerializer):
+    filepond = ImageField(source='image')
 
     class Meta:
         model = ReportImage
