@@ -45,10 +45,6 @@ hr {
     max-width: 85%;
 }
 
-.small-delete {
-    width: auto;
-}
-
 .completed-peak {
     background-color: #007856;
     width: fit-content;
@@ -70,6 +66,20 @@ hr {
 .list-detail {
     font-size: 20px;
 }
+
+/*Trip Report*/
+.small-delete {
+    width: auto;
+}
+
+.image-upload{
+    display: block;
+    height: 200px;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #434245;
+  }
 
 @media only screen and (min-width: 992px) {
     .desktop-width {

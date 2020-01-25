@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'tracker',
     'users',
     'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

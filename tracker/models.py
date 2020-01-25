@@ -2,8 +2,9 @@ from django.db import models
 from users.models import User
 from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 
 
 class Peak(models.Model):
@@ -87,7 +88,15 @@ class ReportTime(models.Model):
 
 class ReportImage(models.Model):
     trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images')
+    image = models.ImageField(upload_to='images/trip_reports')
+
+
+@receiver(pre_save, sender=ReportImage)
+def image_validation(sender, instance, **kwargs):
+    if sender.objects.filter(trip_report=instance.trip_report).count() >= 4:
+        raise ValidationError('No more images allowed')
+    if instance.image.size > 5242880:
+        raise ValidationError('The image is more than 5mb')
 
 
 class ReportComment(models.Model):

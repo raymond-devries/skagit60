@@ -13,6 +13,7 @@ class ReportTimeSerializer(ModelSerializer):
 
 
 class ReportImageSerializer(ModelSerializer):
+
     class Meta:
         model = ReportImage
         fields = '__all__'

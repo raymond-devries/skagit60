@@ -1,9 +1,11 @@
 asgiref==3.2.3
-boto3==1.11.6
-botocore==1.14.6
+boto3==1.11.7
+botocore==1.14.7
 Django==3.0.2
+django-cleanup==4.0.0
 django-crispy-forms==1.8.1
 django-storages==1.8
+djangorestframework==3.11.0
 docutils==0.16
 gunicorn==20.0.4
 jmespath==0.9.4
@@ -17,4 +19,4 @@ pytz==2019.3
 s3transfer==0.3.1
 six==1.14.0
 sqlparse==0.3.0
-urllib3==1.25.7
+urllib3==1.25.8
