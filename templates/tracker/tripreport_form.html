@@ -6,10 +6,12 @@
 {% block head %}
     <!--suppress VueDuplicateTag -->
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
-    <script src="https://unpkg.com/filepond-plugin-image-preview"></script>
-    <script src="https://unpkg.com/filepond-plugin-file-validate-type"></script>
-    <script src="https://unpkg.com/filepond"></script>
-    <script src="https://unpkg.com/vue-filepond"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://unpkg.com/vue-filepond@6.0.2/dist/vue-filepond.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -56,16 +58,14 @@
                 <hr>
                 <h4>Upload Images</h4>
                 <h6>You can upload a maximum of 4 images</h6>
-                {#                <div class="custom-file my-3">#}
-                {#                    <label class="custom-file-label" for="picture_upload">Choose images</label>#}
-                {#                    <input type="file" class="custom-file-input" id="picture_input"#}
-                {#                           v-on:change="addImages" multiple accept="image/*">#}
-                {#                </div>#}
                 <file-pond
                         allow-multiple="true"
                         max-files="4"
                         accepted-file-types="image/jpeg, image/png"
-
+                        image-resize-target-height="1600"
+                        image-resize-target-width="1600"
+                        image-resize-upscale="false"
+                        image-resize-mode="contain"
                 ></file-pond>
             </div>
             <hr>
@@ -86,9 +86,11 @@
         {% endif %}
     </div>
     <script type="text/javascript">
+        let image_api_url = '{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/report_image/';
+
         vueFilePond.setOptions({
             server: {
-                url: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/report_image/'),
+                url: image_api_url,
                 withCredential: true,
                 headers: {
                     'X-CSRFTOKEN': '{{ csrf_token }}'
@@ -98,12 +100,15 @@
                         formData.append('trip_report', {{ tripreport.id }});
                         return formData;
                     },
+                    onload: (response) => JSON.parse(response).id,
                 },
-                revert: {
-                    url: ('./revert' + this.id),
+                revert: ((uniqueFieldId, load, error) => {
+                    axios.delete(image_api_url + uniqueFieldId + '/')
+                        .then(load())
+                        .catch(error_message => error(error_message))
+                })
+            },
 
-                }
-            }
 
         });
 
@@ -122,18 +127,17 @@
                 active_images: 0,
             },
             components: {
-                FilePond: vueFilePond.default(FilePondPluginFileValidateType)
-            },
-            mounted() {
-
+                FilePond: vueFilePond.default(
+                    FilePondPluginFileValidateType,
+                    FilePondPluginImageExifOrientation,
+                    FilePondPluginImageResize,
+                    FilePondPluginImageTransform)
             },
             methods: {
                 deleteTime: function (time_id) {
                     axios.delete(this.time_api + time_id)
                         .then(this.$delete(this.times, time_id))
-                        .catch(function (error) {
-                            console.log(error)
-                        })
+                        .catch(error => console.log(error))
                 },
                 addTime: function () {
                     axios.post(this.time_api,
@@ -148,21 +152,6 @@
                         ).then(
                         this.hours = null
                     )
-                },
-                addImages: function (event) {
-                    this.images_to_upload = Array.from(event.target.files);
-                    this.images_to_upload.forEach(this.uploadImages)
-                },
-                uploadImages: function (image_to_upload) {
-                    image_to_upload = this.resizeImage(image_to_upload);
-                    const imageData = new FormData();
-                    imageData.append('image', image_to_upload, image_to_upload.name);
-                    imageData.append('trip_report', this.trip_report_id);
-
-
-                    axios.post(this.image_api, imageData)
-                        .then(response => console.log(response))
-                        .catch(response => console.log(response))
                 },
             }
         })
