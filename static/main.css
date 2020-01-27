@@ -26,7 +26,7 @@ hr {
 }
 
 .submit-button {
-    background-color: rgb(42, 86, 105);
+    background-color: #2A5669;
     border: none;
     color: white;
     border-radius: 5px;
@@ -37,9 +37,17 @@ hr {
 .submit-button:focus {
     outline: none;
 }
-
 .delete-color {
     background-color: #780700;
+}
+
+@media (hover: hover) {
+    .submit-button:hover {
+    background-color: #223e53;
+}
+    .delete-color:hover {
+        background-color: #5e0700;
+    }
 }
 
 .small {
