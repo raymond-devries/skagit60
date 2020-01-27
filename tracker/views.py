@@ -25,7 +25,18 @@ class PeakDetail(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ticks'] = Tick.objects.filter(peak=self.get_object())
+        ticks = Tick.objects.filter(peak=self.get_object()).order_by('-date')
+        ticks_dict = []
+        for tick in ticks:
+            ticks_dict.append(
+                {
+                    'id': tick.id,
+                    'date': tick.date.strftime("%b %-d, %Y"),
+                    'first_name': tick.climber.first_name,
+                    'last_name': tick.climber.last_name,
+                    'is_owner': tick.climber == self.request.user
+                })
+        context['ticks'] = json.dumps(ticks_dict)
         context['reports'] = TripReport.objects.filter(peak=self.get_object(), published=True)
         return context
 

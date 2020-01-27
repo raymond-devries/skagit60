@@ -19,3 +19,10 @@ class ReportImageViewSet(ModelViewSet):
     serializer_class = ReportImageSerializer
     permission_classes = [LinkedTripReportPermission]
 
+
+class TickViewSet(ModelViewSet):
+    queryset = Tick.objects.all()
+    serializer_class = TickSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(climber=self.request.user)

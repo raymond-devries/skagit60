@@ -6,6 +6,7 @@ router = DefaultRouter()
 
 router.register('report_time', ReportTimeViewSet)
 router.register('report_image', ReportImageViewSet)
+router.register('tick', TickViewSet)
 
 urlpatterns = [
     path

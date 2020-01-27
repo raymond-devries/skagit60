@@ -3,52 +3,100 @@
 {% load define_action %}
 
 {% block content %}
-    {% if peak.complete %}
-        {% define "completed-peak" as completed %}
-    {% else %}
-        {% define "uncompleted-peak" as completed %}
-    {% endif %}
-    <h1 class="text-center py-1 px-3 m-3 mb-4 mx-auto {{ completed }}">{{ peak.display_name }}</h1>
-    <hr>
-    <h2><b>Info</b></h2>
-    <ul class="list-detail">
-
-        <li>
-            Completed:
-            {% if peak.complete %}
-                Yes
-            {% else %}
-                No
+    <div id="app">
+        <h1 class="text-center py-1 px-3 m-3 mb-4 mx-auto" :class="completed_class">{{ peak.display_name }}</h1>
+        <hr>
+        <h2><b>Info</b></h2>
+        <ul class="list-detail">
+            <li>
+                Completed: [[completed_word]]
+            </li>
+            <li>Latitude: {{ peak.lat }}</li>
+            <li>Longitude: {{ peak.long }}</li>
+            <li>Elevation: {{ peak.elevation }}ft</li>
+            <li><a href="{{ peak.peakbagger_link }}">PeakBagger Link</a></li>
+        </ul>
+        <div>
+            <hr>
+            <div class="row">
+                <div class="col-md">
+                    <h2><b>Ticks</b></h2>
+                    <ul class="list-detail">
+                        <li v-for="(tick, index) in ticks" class="my-2">
+                            [[tick.first_name]] [[tick.last_name]]- [[tick.date]]
+                            <button v-show="tick.is_owner" type="button" class="submit-button small-delete delete-color"
+                                    style="padding: 0.15em" v-on:click="removeTick(tick.id, index)">
+                                <small>Delete</small>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mb-3 col-md">
+                    <label for="tick-date">Date you climbed this peak</label>
+                    <input type="date" id="tick-date" class="form-control mb-3" v-model="tick_date">
+                    <button type="button" class="submit-button" v-on:click="addTick">
+                        Tick {{ peak.display_name }}</button>
+                </div>
+            </div>
+            {% if reports.exists %}
+                <hr>
+                <h2><b>Trip Reports</b></h2>
+                <ul class="list-detail">
+                    {% for tripreport in reports %}
+                        <li>
+                            <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
+                                {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% endif %}
-        </li>
-        <li>Latitude: {{ peak.lat }}</li>
-        <li>Longitude: {{ peak.long }}</li>
-        <li>Elevation: {{ peak.elevation }}ft</li>
-        <li><a href="{{ peak.peakbagger_link }}">PeakBagger Link</a></li>
-    </ul>
-    {% if ticks.exists %}
-        <hr>
-        <h2><b>Ticks</b></h2>
-        <ul class="list-detail">
-
-            {% for tick in ticks %}
-                <li>{{ tick.climber.first_name }} {{ tick.climber.last_name }}- {{ tick.date }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if reports.exists %}
-        <hr>
-        <h2><b>Trip Reports</b></h2>
-        <ul class="list-detail">
-            {% for tripreport in reports %}
-                <li>
-                    <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
-                        {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-
+        </div>
+    </div>
+    <script type="text/javascript">
+        let app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                peak_id: {{ peak.id }},
+                ticks: {{ ticks|safe }},
+                tick_date: null,
+                tick_api: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/tick/')
+            },
+            computed: {
+                completed: function () {
+                    return (this.ticks.length !== 0)
+                        },
+                completed_class: function () {
+                    if (this.completed) {
+                        return 'completed-peak'
+                    } else {
+                        return 'uncompleted-peak'
+                    }
+                },
+                completed_word: function () {
+                    if (this.completed) {
+                        return 'Yes'
+                    } else
+                        return 'No'
+                }
+            },
+            methods: {
+                addTick: function () {
+                    axios.post(this.tick_api,
+                        {
+                            'peak': this.peak_id,
+                            'date': this.tick_date
+                        })
+                        .then(response => this.ticks.push(response.data))
+                        .catch(error => console.log(error))
+                },
+                removeTick: function (tick_id, index) {
+                    axios.delete(this.tick_api + tick_id + '/')
+                        .then(this.$delete(this.ticks, index))
+                        .catch(error => console.log(error))
+                }
+            }
+        })
+    </script>
 {% endblock content %}

@@ -129,7 +129,11 @@ LOGIN_URL = 'login'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DATE_FORMAT': "%b %-d, %Y",
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
