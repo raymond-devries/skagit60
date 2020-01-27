@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import View
 from .forms import *
 from .tokens import account_activation_token
-from tracker.models import Tick, TripReport
+from tracker.models import Tick, TripReport, InterestedClimber
 
 
 class CustomLogin(LoginView):
@@ -79,8 +79,10 @@ class Profile(LoginRequiredMixin, View):
         self.delete_empty_trip_reports()
         ticks = Tick.objects.filter(climber=request.user)
         trip_reports = TripReport.objects.filter(writer=request.user)
+        peak_interests = InterestedClimber.objects.filter(climber=request.user)
         return render(request, 'users/profile.html',
-                      {'user': request.user, 'ticks': ticks, 'trip_reports': trip_reports})
+                      {'user': request.user, 'ticks': ticks, 'trip_reports': trip_reports,
+                       'peak_interests': peak_interests})
 
     def delete_empty_trip_reports(self):
         reports_to_delete = TripReport.objects.filter(writer=self.request.user, start=None)

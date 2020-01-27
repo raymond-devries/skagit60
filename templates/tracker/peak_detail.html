@@ -24,7 +24,7 @@
                     <li v-for="(tick, index) in ticks" class="my-2">
                         [[tick.first_name]] [[tick.last_name]]- [[tick.date]]
                         <button v-show="tick.is_owner" type="button"
-                                class="submit-button small-delete delete-color mini-button"
+                                class="submit-button small delete-color mini-button"
                                 v-on:click="removeTick(tick.id, index)">
                             <small>Delete</small>
                         </button>

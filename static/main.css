@@ -34,8 +34,16 @@ hr {
     width: 100%;
 }
 
+.submit-button:focus {
+    outline: none;
+}
+
 .delete-color {
     background-color: #780700;
+}
+
+.small {
+    width: auto;
 }
 
 .mini-button {
@@ -69,11 +77,6 @@ hr {
 /*Peak Detail*/
 .list-detail {
     font-size: 20px;
-}
-
-/*Trip Report Creation*/
-.small-delete {
-    width: auto;
 }
 
 .previously-uploaded-images div {

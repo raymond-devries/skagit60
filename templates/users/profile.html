@@ -19,9 +19,13 @@
         <h3><b>Ticks</b></h3>
         {% if ticks.exists %}
             {% for tick in ticks %}
-                <h5>{{ tick.peak.display_name }} {{ tick.date }}-
-                    <small><a href="{% url 'tick_delete' pk=tick.pk %}">Delete</a></small>
-                </h5>
+                <form class="d-flex align-items-center my-2">
+                    <h5 class="my-2">{{ tick.peak.display_name }} {{ tick.date }}</h5>
+                    <button type="submit" formaction="{% url 'peak_detail' pk=tick.peak.pk %}"
+                            class="submit-button small mx-2 px-3 py-2">
+                        <small>View</small>
+                    </button>
+                </form>
             {% endfor %}
         {% else %}
             <h5>You haven't ticked any peaks. Go out and climb something!</h5>
@@ -30,15 +34,39 @@
         <h3><b>Trip Reports</b></h3>
         {% if trip_reports.exists %}
             {% for trip_report in trip_reports %}
-                <h5>{{ trip_report.peak.display_name }} {{ trip_report.start }}-
-                    <small><a href="{% url 'trip_report_update' pk=trip_report.pk %}">Edit</a></small>
-                    <small><a href="{% url 'trip_report_delete' pk=trip_report.pk %}">Delete</a></small>
-                </h5>
+                <div class="d-flex align-items-center">
+                    <h5 class="my-2">{{ trip_report.peak.display_name }} {{ trip_report.start }} </h5>
+                    <form class="mx-2">
+                        <button type="submit" formaction="{% url 'trip_report_update' pk=trip_report.pk %}"
+                                class="submit-button small px-3 py-2">
+                            <small>Edit</small>
+                        </button>
+                    </form>
+                    <form class="mx-1">
+                        <button type="submit" formaction="{% url 'trip_report_delete' pk=trip_report.pk %}"
+                                class="submit-button small px-3 py-2">
+                            <small>Delete</small>
+                        </button>
+                    </form>
+                </div>
             {% endfor %}
         {% else %}
             <h5>You haven't submitted any trip reports. Go out and climb something and submit one!</h5>
         {% endif %}
-        <hr>
-        <small class="my-3">Go back <a href="{% url 'home' %}">Home</a></small>
+        {% if peak_interests.exists %}
+            <hr>
+            <h3><b>Peaks that you're interested in climbing</b></h3>
+            {% for peak in peak_interests %}
+                 <form class="d-flex align-items-center my-2">
+                    <h5 class="my-2">{{ peak.peak.display_name }} </h5>
+                    <button type="submit" formaction="{% url 'peak_detail' pk=peak.peak.pk %}"
+                            class="submit-button small mx-2 px-3 py-2">
+                        <small>View</small>
+                    </button>
+                </form>
+            {% endfor %}
+        {% endif %}
     </div>
+
+
 {% endblock content %}
