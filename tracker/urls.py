@@ -9,6 +9,4 @@ urlpatterns = [
     path('create_trip_report/<int:peak_id>', TripReportCreate.as_view(), name='trip_report_create_peak'),
     path('trip_report/<int:pk>/', TripReportUpdate.as_view(), name='trip_report_update'),
     path('delete_trip_report/<int:pk>/', TripReportDelete.as_view(), name='trip_report_delete'),
-    path('tick', TickCreate.as_view(), name='tick_create'),
-    path('tick_delete/<int:pk>/', TickDelete.as_view(), name='tick_delete')
 ]

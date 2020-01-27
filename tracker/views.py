@@ -131,22 +131,3 @@ class TripReportDelete(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return TripReport.objects.filter(pk=self.kwargs['pk'], writer=self.request.user)
-
-
-class TickCreate(LoginRequiredMixin, FormView):
-    form_class = CreateTickForm
-    template_name = 'tracker/tick_create.html'
-    success_url = reverse_lazy('home')
-
-    def form_valid(self, form):
-        form.instance.climber = self.request.user
-        form.save()
-        return super().form_valid(form)
-
-
-class TickDelete(LoginRequiredMixin, DeleteView):
-    model = Tick
-    success_url = reverse_lazy('profile')
-
-    def get_queryset(self):
-        return Tick.objects.filter(pk=self.kwargs['pk'], climber=self.request.user)
