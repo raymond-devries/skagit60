@@ -40,19 +40,29 @@
                 </div>
             {% endif %}
         </div>
-        {% if reports.exists %}
             <hr>
-            <h2><b>Trip Reports</b></h2>
-            <ul class="list-detail">
-                {% for tripreport in reports %}
-                    <li>
-                        <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
-                            {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <div class="row">
+            <div class="col-md">
+                <h2><b>Trip Reports</b></h2>
+                <ul class="list-detail">
+                    {% for tripreport in reports %}
+                        <li>
+                            <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
+                                {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if request.user.is_authenticated %}
+                <form class="col-md">
+                    <button type="submit" formaction="{% url 'trip_report_create_peak' peak_id=peak.id %}"
+                            class="submit-button my-3">
+                        Add Trip Report for {{ peak.display_name }}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
         <hr>
         <div class="row">
             <div class="col-md">
@@ -63,6 +73,7 @@
                     </li>
                 </ul>
             </div>
+            {% if request.user.is_authenticated %}
             <div class="col-md">
                 <button type="button" class="submit-button" v-on:click="addInterest"
                         v-if="climber_interest_index === -1">
@@ -73,6 +84,7 @@
                     Remove Interest
                 </button>
             </div>
+            {% endif %}
         </div>
     </div>
     <script type="text/javascript">

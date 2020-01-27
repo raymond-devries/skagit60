@@ -74,7 +74,10 @@ class TripReportCreate(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # an instance must be created to ensure that apis that add related models will work during trip report creation
         user = self.request.user
-        trip_report = TripReport(writer=user)
+        try:
+            trip_report = TripReport(writer=user, peak_id=self.kwargs['peak_id'])
+        except KeyError:
+            trip_report = TripReport(writer=user)
         trip_report.save()
         return redirect('trip_report_update', pk=trip_report.pk)
 

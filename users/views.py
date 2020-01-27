@@ -83,7 +83,7 @@ class Profile(LoginRequiredMixin, View):
                       {'user': request.user, 'ticks': ticks, 'trip_reports': trip_reports})
 
     def delete_empty_trip_reports(self):
-        reports_to_delete = TripReport.objects.filter(writer=self.request.user, peak=None)
+        reports_to_delete = TripReport.objects.filter(writer=self.request.user, start=None)
         reports_to_delete.delete()
 
 
