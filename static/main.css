@@ -38,6 +38,10 @@ hr {
     background-color: #780700;
 }
 
+.mini-button {
+    padding: 0.15em;
+}
+
 .uncompleted-peak {
     background-color: #780700;
     width: fit-content;

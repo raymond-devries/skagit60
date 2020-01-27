@@ -37,6 +37,18 @@ class PeakDetail(DetailView):
                     'is_owner': tick.climber == self.request.user
                 })
         context['ticks'] = json.dumps(ticks_dict)
+        interested_climbers = InterestedClimber.objects.filter(peak=self.get_object()).order_by('climber__first_name')
+        interested_climbers_dict = []
+        for climber in interested_climbers:
+            interested_climbers_dict.append(
+                {
+                    'id': climber.id,
+                    'first_name': climber.climber.first_name,
+                    'last_name': climber.climber.last_name,
+                    'is_owner': climber.climber == self.request.user
+                }
+            )
+        context['interested_climbers'] = json.dumps(interested_climbers_dict)
         context['reports'] = TripReport.objects.filter(peak=self.get_object(), published=True)
         return context
 

@@ -43,10 +43,15 @@ def mark_peak_as_incomplete(sender, instance, **kwargs):
         instance.peak.save()
 
 
-class InterestedParticipant(models.Model):
+class InterestedClimber(models.Model):
     climber = models.ForeignKey(User, on_delete=models.CASCADE)
     peak = models.ForeignKey(Peak, on_delete=models.CASCADE)
-    message = models.TextField(max_length=400)
+
+
+@receiver(pre_save, sender=InterestedClimber)
+def interest_peak_only_once(sender, instance, **kwargs):
+    if sender.objects.filter(climber=instance.climber, peak=instance.peak).exists():
+        raise ValidationError('A climber can only be interested in a particular peak once')
 
 
 class TripReport(models.Model):

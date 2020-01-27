@@ -1,6 +1,6 @@
 from rest_framework.fields import CharField, ImageField, BooleanField
 from rest_framework.serializers import ModelSerializer
-from tracker.models import ReportTime, ReportImage, Tick
+from tracker.models import ReportTime, ReportImage, Tick, InterestedClimber
 
 
 class ReportTimeSerializer(ModelSerializer):
@@ -30,3 +30,9 @@ class TickSerializer(ModelSerializer):
     class Meta:
         model = Tick
         fields = ['id', 'date', 'peak', 'first_name', 'last_name', 'is_owner']
+
+
+class InterestedClimberSerializer(TickSerializer):
+    class Meta:
+        model = InterestedClimber
+        fields = ['id', 'peak', 'first_name', 'last_name', 'is_owner']

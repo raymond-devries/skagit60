@@ -16,44 +16,68 @@
             <li>Elevation: {{ peak.elevation }}ft</li>
             <li><a href="{{ peak.peakbagger_link }}">PeakBagger Link</a></li>
         </ul>
-        <div>
-            <hr>
-            <div class="row">
-                <div class="col-md">
-                    <h2><b>Ticks</b></h2>
-                    <ul class="list-detail">
-                        <li v-for="(tick, index) in ticks" class="my-2">
-                            [[tick.first_name]] [[tick.last_name]]- [[tick.date]]
-                            <button v-show="tick.is_owner" type="button" class="submit-button small-delete delete-color"
-                                    style="padding: 0.15em" v-on:click="removeTick(tick.id, index)">
-                                <small>Delete</small>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+        <hr>
+        <div class="row">
+            <div class="col-md">
+                <h2><b>Ticks</b></h2>
+                <ul class="list-detail">
+                    <li v-for="(tick, index) in ticks" class="my-2">
+                        [[tick.first_name]] [[tick.last_name]]- [[tick.date]]
+                        <button v-show="tick.is_owner" type="button"
+                                class="submit-button small-delete delete-color mini-button"
+                                v-on:click="removeTick(tick.id, index)">
+                            <small>Delete</small>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            {% if request.user.is_authenticated %}
                 <div class="mb-3 col-md">
                     <label for="tick-date">Date you climbed this peak</label>
                     <input type="date" id="tick-date" class="form-control mb-3" v-model="tick_date">
                     <button type="button" class="submit-button" v-on:click="addTick">
                         Tick {{ peak.display_name }}</button>
                 </div>
-            </div>
-            {% if reports.exists %}
-                <hr>
-                <h2><b>Trip Reports</b></h2>
-                <ul class="list-detail">
-                    {% for tripreport in reports %}
-                        <li>
-                            <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
-                                {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
             {% endif %}
+        </div>
+        {% if reports.exists %}
+            <hr>
+            <h2><b>Trip Reports</b></h2>
+            <ul class="list-detail">
+                {% for tripreport in reports %}
+                    <li>
+                        <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">
+                            {{ tripreport.writer.first_name }} {{ tripreport.writer.last_name }}- {{ tripreport.start }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <hr>
+        <div class="row">
+            <div class="col-md">
+                <h2><b>Interested Climbers</b></h2>
+                <ul class="list-detail">
+                    <li v-for="(climber, index) in interested_climbers" class="my-2">
+                        [[climber.first_name]] [[climber.last_name]]
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md">
+                <button type="button" class="submit-button" v-on:click="addInterest"
+                        v-if="climber_interest_index === -1">
+                    I'm interested in climbing {{ peak.display_name }}
+                </button>
+                <button type="button" class="submit-button delete-color" v-on:click="removeInterest"
+                        v-if="climber_interest_index !== -1">
+                    Remove Interest
+                </button>
+            </div>
         </div>
     </div>
     <script type="text/javascript">
+        const base_url = '{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/';
+
         let app = new Vue({
             el: '#app',
             delimiters: ['[[', ']]'],
@@ -61,12 +85,14 @@
                 peak_id: {{ peak.id }},
                 ticks: {{ ticks|safe }},
                 tick_date: null,
-                tick_api: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/tick/')
+                tick_api: ( base_url + 'tick/'),
+                interested_climber_api:  (base_url + 'interested_climber/'),
+                interested_climbers: {{ interested_climbers|safe }}
             },
             computed: {
                 completed: function () {
                     return (this.ticks.length !== 0)
-                        },
+                },
                 completed_class: function () {
                     if (this.completed) {
                         return 'completed-peak'
@@ -79,6 +105,15 @@
                         return 'Yes'
                     } else
                         return 'No'
+                },
+                climber_interest_index: function () {
+                    function is_interested(element) {
+                        return element.is_owner
+                    }
+                    return this.interested_climbers.findIndex(is_interested)
+                },
+                climber_interest_id: function () {
+                    return this.interested_climbers[this.climber_interest_index]['id']
                 }
             },
             methods: {
@@ -95,7 +130,20 @@
                     axios.delete(this.tick_api + tick_id + '/')
                         .then(this.$delete(this.ticks, index))
                         .catch(error => console.log(error))
+                },
+                addInterest: function () {
+                    axios.post(this.interested_climber_api,
+                        {
+                         'peak': this.peak_id
+                        }).then(response => this.interested_climbers.push(response.data))
+                    .catch(error => console.log(error))
+                },
+                removeInterest: function () {
+                    axios.delete(this.interested_climber_api + this.climber_interest_id + '/')
+                    .then(this.$delete(this.interested_climbers, this.climber_interest_index))
+                    .catch(error => console.log(error))
                 }
+
             }
         })
     </script>

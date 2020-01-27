@@ -20,9 +20,20 @@ class ReportImageViewSet(ModelViewSet):
     permission_classes = [LinkedTripReportPermission]
 
 
+class LinkedPeakPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.climber == request.user
+
+
 class TickViewSet(ModelViewSet):
     queryset = Tick.objects.all()
     serializer_class = TickSerializer
+    permission_classes = [LinkedPeakPermission]
 
     def perform_create(self, serializer):
         serializer.save(climber=self.request.user)
+
+
+class InterestedClimberViewSet(TickViewSet):
+    queryset = InterestedClimber.objects.all()
+    serializer_class = InterestedClimberSerializer
