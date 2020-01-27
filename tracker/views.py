@@ -26,22 +26,20 @@ class PeakDetail(DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ticks'] = Tick.objects.filter(peak=self.get_object())
-        context['reports'] = TripReport.objects.filter(peak=self.get_object())
+        context['reports'] = TripReport.objects.filter(peak=self.get_object(), published=True)
         return context
 
 
 class TripReportDetail(DetailView):
     model = TripReport
+    queryset = model.objects.filter(published=True)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
-        try:
-            context['show_end'] = report.start != report.end
-        except AttributeError:
-            # if end date or start date is none, an attribute error is thrown
-            context['show_end'] = False
+        context['show_end'] = report.start != report.end and report.end is not None
 
+        context['images'] = ReportImage.objects.filter(trip_report=report)
         context['times'] = ReportTime.objects.filter(trip_report=report)
 
         return context
@@ -84,9 +82,19 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
                  'end_point_display': time.get_end_point_display(),
                  'time': str(time.time),
                  'id': time.id}
-        
+
         context['times'] = json.dumps(times_dict)
         context['time_choices'] = json.dumps(ReportTime._meta.get_field('start_point').choices)
+
+        images = ReportImage.objects.filter(trip_report=report)
+        images_dict = {}
+        for image in images:
+            images_dict[image.id] = \
+                {'id': image.id,
+                 'url': image.image.url}
+
+        context['images'] = json.dumps(images_dict)
+        context['max_uploads'] = TripReport.max_images - images.count()
 
         return context
 

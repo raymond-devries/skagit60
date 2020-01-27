@@ -1,5 +1,5 @@
 from rest_framework.fields import CharField, ImageField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from tracker.models import ReportTime, ReportImage
 
 

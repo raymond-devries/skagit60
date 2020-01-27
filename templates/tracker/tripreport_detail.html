@@ -14,7 +14,7 @@
     </div>
     <hr>
     <div class="d-lg-flex justify-content-around">
-        <div class="desktop-width">
+        <div>
             {% if tripreport.permits is not None %}
                 <p>Permits: {{ tripreport.permits }}</p>
             {% endif %}
@@ -29,26 +29,32 @@
                 <p>Gear: {{ tripreport.gear }}</p>
             {% endif %}
             <p>
-            {% for time in times %}
-                From {{ time.get_start_point_display }} to {{ time.get_end_point_display }}: {{ time.time }} hours <br>
-            {% endfor %}
+                {% for time in times %}
+                    From {{ time.get_start_point_display }} to {{ time.get_end_point_display }}: {{ time.time }} hours
+                    <br>
+                {% endfor %}
             </p>
             {% if tripreport.weather != '' %}
                 <p>Weather: {{ tripreport.weather }}</p>
             {% endif %}
-            {% if tripreport.report != ''%}
+            {% if tripreport.report != '' %}
                 <p>{{ tripreport.report }}</p>
             {% endif %}
         </div>
-        <div>
+        <div style="min-width: 200px">
             <h4><b>Info</b></h4>
-            <li>Latitude: {{ tripreport.peak.lat }}</li>
-            <li>Longitude: {{ tripreport.peak.long }}</li>
-            <li>Elevation: {{ tripreport.peak.elevation }}ft</li>
-            <li><a href="{{ tripreport.peak.peakbagger_link }}">PeakBagger Link</a></li>
+            <ul>
+                <li>Latitude: {{ tripreport.peak.lat }}</li>
+                <li>Longitude: {{ tripreport.peak.long }}</li>
+                <li>Elevation: {{ tripreport.peak.elevation }}ft</li>
+                <li><a href="{{ tripreport.peak.peakbagger_link }}">PeakBagger Link</a></li>
+            </ul>
         </div>
     </div>
-
-
-
+    <div class="trip-report-images">
+        {% for image in images %}
+            <img src="{{ image.image.url }}" alt="An attached trip report image"
+                 class="img-fluid rounded mb-3">
+        {% endfor %}
+    </div>
 {% endblock content %}

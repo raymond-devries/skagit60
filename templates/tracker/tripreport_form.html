@@ -6,16 +6,18 @@
 {% block head %}
     <!--suppress VueDuplicateTag -->
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
     <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script src="https://unpkg.com/vue-filepond@6.0.2/dist/vue-filepond.min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="m-4 desktop-width">
+    <div class="m-4">
         <h2>Trip Report</h2>
         <hr>
         <form method="post">
@@ -28,9 +30,9 @@
                     <h5 class="mr-3">
                         [[ time.start_point_display ]] to [[ time.end_point_display ]]: [[ time.time ]] hours
                     </h5>
-                    <button type="button" class="delete-color submit-button small-delete"><b
+                    <button type="button" class="delete-color submit-button small-delete"
                             v-on:click="deleteTime(time.id)">
-                        Delete</b>
+                        <b>Delete</b>
                     </button>
                 </div>
                 <div class="form-group">
@@ -56,17 +58,26 @@
                     Add Time
                 </button>
                 <hr>
-                <h4>Upload Images</h4>
+                <h4>Images</h4>
                 <h6>You can upload a maximum of 4 images</h6>
                 <file-pond
                         allow-multiple="true"
-                        max-files="4"
+                        :max-files="max_uploads"
                         accepted-file-types="image/jpeg, image/png"
                         image-resize-target-height="1600"
                         image-resize-target-width="1600"
                         image-resize-upscale="false"
                         image-resize-mode="contain"
                 ></file-pond>
+
+                <div class="previously-uploaded-images">
+                <div v-for="image in previously_uploaded_images" class="mt-3 mb-4">
+                    <img :src="image.url" alt="An image attached to the trip report by the user"
+                    class="img-fluid rounded">
+                    <button type="button" class="delete-color submit-button"
+                    v-on:click="removeImage(image.id)"><b>x</b></button>
+                </div>
+                </div>
             </div>
             <hr>
             {% if tripreport.published %}
@@ -120,22 +131,24 @@
                 times: {{ times|safe }},
                 time_choices: {{ time_choices|safe }},
                 time_api: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/report_time/'),
+                image_api: image_api_url,
                 start_point: 'TH',
                 end_point: 'C',
                 hours: null,
-                images_to_upload: null,
-                active_images: 0,
+                previously_uploaded_images: {{ images|safe }},
+                max_uploads: {{ max_uploads }}
             },
             components: {
                 FilePond: vueFilePond.default(
                     FilePondPluginFileValidateType,
                     FilePondPluginImageExifOrientation,
                     FilePondPluginImageResize,
-                    FilePondPluginImageTransform)
+                    FilePondPluginImageTransform,
+                    FilePondPluginImagePreview)
             },
             methods: {
                 deleteTime: function (time_id) {
-                    axios.delete(this.time_api + time_id)
+                    axios.delete(this.time_api + time_id + '/')
                         .then(this.$delete(this.times, time_id))
                         .catch(error => console.log(error))
                 },
@@ -147,12 +160,19 @@
                             'time': this.hours,
                             'trip_report': this.trip_report_id
                         })
-                        .then(
-                            response => this.$set(this.times, response.data.id, response.data)
-                        ).then(
-                        this.hours = null
-                    )
+                        .then(response => {
+                            this.$set(this.times, response.data.id, response.data);
+                            this.hours = null;
+                        })
                 },
+                removeImage: function (image_id) {
+                    axios.delete(this.image_api + image_id + '/')
+                    .then(() => {
+                        this.$delete(this.previously_uploaded_images, image_id);
+                        this.max_uploads += 1
+                    })
+                    .catch(error => console.log(error))
+                }
             }
         })
     </script>

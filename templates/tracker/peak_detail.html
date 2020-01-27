@@ -10,8 +10,9 @@
     {% endif %}
     <h1 class="text-center py-1 px-3 m-3 mb-4 mx-auto {{ completed }}">{{ peak.display_name }}</h1>
     <hr>
+    <h2><b>Info</b></h2>
     <ul class="list-detail">
-        <h2><b>Info</b></h2>
+
         <li>
             Completed:
             {% if peak.complete %}
@@ -27,8 +28,9 @@
     </ul>
     {% if ticks.exists %}
         <hr>
+        <h2><b>Ticks</b></h2>
         <ul class="list-detail">
-            <h2><b>Ticks</b></h2>
+
             {% for tick in ticks %}
                 <li>{{ tick.climber.first_name }} {{ tick.climber.last_name }}- {{ tick.date }}</li>
             {% endfor %}
@@ -36,8 +38,8 @@
     {% endif %}
     {% if reports.exists %}
         <hr>
+        <h2><b>Trip Reports</b></h2>
         <ul class="list-detail">
-            <h2><b>Trip Reports</b></h2>
             {% for tripreport in reports %}
                 <li>
                     <a href="{% url 'trip_report_detail' pk=tripreport.pk %}">

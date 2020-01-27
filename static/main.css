@@ -67,23 +67,51 @@ hr {
     font-size: 20px;
 }
 
-/*Trip Report*/
+/*Trip Report Creation*/
 .small-delete {
     width: auto;
 }
 
-.image-upload{
-    display: block;
-    height: 200px;
-    width: 100%;
-    text-align: center;
-    border-radius: 5px;
-    background-color: #434245;
-  }
+.previously-uploaded-images div {
+    position: relative;
+}
+
+.previously-uploaded-images button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+
+}
+
+@media only screen and (min-width: 576px) {
+    .previously-uploaded-images {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .previously-uploaded-images div {
+        max-width: 47%;
+
+    }
+}
 
 @media only screen and (min-width: 992px) {
     .desktop-width {
         max-width: 700px;
+    }
+
+    .trip-report-images {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .trip-report-images img {
+        max-width: 48%;
+        align-self: center;
     }
 
 }

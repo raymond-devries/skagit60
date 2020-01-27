@@ -50,6 +50,7 @@ class InterestedParticipant(models.Model):
 
 
 class TripReport(models.Model):
+    max_images = 4
     difficulty_choices = [
         (1, 'Easy'),
         (2, 'Moderate'),
@@ -93,7 +94,7 @@ class ReportImage(models.Model):
 
 @receiver(pre_save, sender=ReportImage)
 def image_validation(sender, instance, **kwargs):
-    if sender.objects.filter(trip_report=instance.trip_report).count() >= 4:
+    if sender.objects.filter(trip_report=instance.trip_report).count() >= TripReport.max_images:
         raise ValidationError('No more images allowed')
     if instance.image.size > 5242880:
         raise ValidationError('The image is more than 5mb')
