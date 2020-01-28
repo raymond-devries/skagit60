@@ -57,4 +57,103 @@
                  class="img-fluid rounded mb-3">
         {% endfor %}
     </div>
+    <hr>
+    <h4>Comments</h4>
+    <div id="app">
+        <div class="form-group">
+            <label for="comment_text_box">Comment</label>
+            <textarea class="form-control" id="comment_text_box" rows="6"
+                      v-model="added_comment"></textarea>
+            <button type="button" class="submit-button my-4" v-on:click="addComment">Add Comment</button>
+        </div>
+        <div v-for="(comment, index) in comments" class="my-3">
+            <div v-if="showEdit(comment.id)">
+                <textarea class="form-control" id="comment_text_box" rows="6" v-model="edited_comment">
+                </textarea>
+                <button type="button" class="submit-button my-4" v-on:click="editComment(comment.id, index)">
+                    Edit Comment
+                </button>
+            </div>
+            <div class="border border-light rounded" v-else>
+                <div class="p-3">
+                    <h6 class=>[[comment.first_name]] [[comment.last_name]]
+                        <br><small>[[comment.time]]</small>
+                    </h6>
+                    <p>[[comment.comment]]</p>
+                    <div v-if="comment.is_owner && !editing">
+                        <button type="button" class="submit-button small-button"
+                                v-on:click="startEdit(comment.id, comment.comment)">Edit
+                        </button>
+                        <button type="button" class="submit-button delete-color small-button"
+                                v-on:click="deleteComment(comment.id, index)">Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        let app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                comment_api: ('{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/report_comment/'),
+                comments: {{ comments|safe }},
+                added_comment: '',
+                trip_report_id: {{ tripreport.id }},
+
+                edited_comment: '',
+                edit_comment_id: null,
+                editing: false,
+
+            },
+            methods: {
+                addComment: function () {
+                    axios.post(this.comment_api,
+                        {
+                            'comment': this.added_comment,
+                            'trip_report': this.trip_report_id
+                        })
+                        .then(response => {
+                            let data = response.data;
+                            data['is_owner'] = true;
+                            this.comments.unshift(data);
+                            this.added_comment = '';
+                        })
+                },
+                deleteComment: function (comment_id, index) {
+                    axios.delete(this.comment_api + comment_id + '/')
+                        .then(this.$delete(this.comments, index))
+                },
+                startEdit: function (comment_id, comment) {
+                    this.edit_comment_id = comment_id;
+                    this.edited_comment = comment;
+                    this.editing = true;
+                },
+                showEdit: function (id) {
+                    return id === this.edit_comment_id
+                },
+                editComment: function (comment_id, index) {
+                    axios.patch(this.comment_api + comment_id + '/',
+                        {
+                            'comment': this.edited_comment,
+                            'trip_report': this.trip_report_id
+                        })
+                        .then(response => {
+                            let data = response.data;
+                            data['is_owner'] = true;
+                            this.$delete(this.comments, index);
+                            this.comments.splice(index, 0, data);
+                            this.edited_comment = '';
+                            this.edit_comment_id = null;
+                            this.editing = false;
+
+                        })
+                }
+
+            }
+
+        })
+    </script>
 {% endblock content %}

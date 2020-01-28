@@ -24,7 +24,7 @@
                     <li v-for="(tick, index) in ticks" class="my-2">
                         [[tick.first_name]] [[tick.last_name]]- [[tick.date]]
                         <button v-show="tick.is_owner" type="button"
-                                class="submit-button small delete-color mini-button"
+                                class="submit-button small-button delete-color mini-button"
                                 v-on:click="removeTick(tick.id, index)">
                             <small>Delete</small>
                         </button>
@@ -40,7 +40,7 @@
                 </div>
             {% endif %}
         </div>
-            <hr>
+        <hr>
         <div class="row">
             <div class="col-md">
                 <h2><b>Trip Reports</b></h2>
@@ -74,16 +74,16 @@
                 </ul>
             </div>
             {% if request.user.is_authenticated %}
-            <div class="col-md">
-                <button type="button" class="submit-button" v-on:click="addInterest"
-                        v-if="climber_interest_index === -1">
-                    I'm interested in climbing {{ peak.display_name }}
-                </button>
-                <button type="button" class="submit-button delete-color" v-on:click="removeInterest"
-                        v-if="climber_interest_index !== -1">
-                    Remove Interest
-                </button>
-            </div>
+                <div class="col-md">
+                    <button type="button" class="submit-button" v-on:click="addInterest"
+                            v-if="climber_interest_index === -1">
+                        I'm interested in climbing {{ peak.display_name }}
+                    </button>
+                    <button type="button" class="submit-button delete-color" v-on:click="removeInterest"
+                            v-if="climber_interest_index !== -1">
+                        Remove Interest
+                    </button>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -97,8 +97,8 @@
                 peak_id: {{ peak.id }},
                 ticks: {{ ticks|safe }},
                 tick_date: null,
-                tick_api: ( base_url + 'tick/'),
-                interested_climber_api:  (base_url + 'interested_climber/'),
+                tick_api: (base_url + 'tick/'),
+                interested_climber_api: (base_url + 'interested_climber/'),
                 interested_climbers: {{ interested_climbers|safe }}
             },
             computed: {
@@ -122,6 +122,7 @@
                     function is_interested(element) {
                         return element.is_owner
                     }
+
                     return this.interested_climbers.findIndex(is_interested)
                 },
                 climber_interest_id: function () {
@@ -135,7 +136,11 @@
                             'peak': this.peak_id,
                             'date': this.tick_date
                         })
-                        .then(response => this.ticks.push(response.data))
+                        .then(response => {
+                            let data = response.data;
+                            data['is_owner'] = true;
+                            this.ticks.push(data)
+                        })
                         .catch(error => console.log(error))
                 },
                 removeTick: function (tick_id, index) {
@@ -146,14 +151,19 @@
                 addInterest: function () {
                     axios.post(this.interested_climber_api,
                         {
-                         'peak': this.peak_id
-                        }).then(response => this.interested_climbers.push(response.data))
-                    .catch(error => console.log(error))
+                            'peak': this.peak_id
+                        })
+                        .then(response => {
+                            let data = response.data;
+                            data['is_owner'] = true;
+                            this.interested_climbers.unshift(data)
+                        })
+                        .catch(error => console.log(error))
                 },
                 removeInterest: function () {
                     axios.delete(this.interested_climber_api + this.climber_interest_id + '/')
-                    .then(this.$delete(this.interested_climbers, this.climber_interest_index))
-                    .catch(error => console.log(error))
+                        .then(this.$delete(this.interested_climbers, this.climber_interest_index))
+                        .catch(error => console.log(error))
                 }
 
             }

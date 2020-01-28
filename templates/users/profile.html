@@ -22,7 +22,7 @@
                 <form class="d-flex align-items-center my-2">
                     <h5 class="my-2">{{ tick.peak.display_name }} {{ tick.date }}</h5>
                     <button type="submit" formaction="{% url 'peak_detail' pk=tick.peak.pk %}"
-                            class="submit-button small mx-2 px-3 py-2">
+                            class="submit-button small-button mx-2 px-3 py-2">
                         <small>View</small>
                     </button>
                 </form>
@@ -35,16 +35,18 @@
         {% if trip_reports.exists %}
             {% for trip_report in trip_reports %}
                 <div class="d-flex align-items-center">
-                    <h5 class="my-2">{{ trip_report.peak.display_name }} {{ trip_report.start }} </h5>
+                    <h5 class="my-2"><a href="{% url 'trip_report_detail' pk=trip_report.id %}">
+                        {{ trip_report.peak.display_name }} {{ trip_report.start }}
+                    </a></h5>
                     <form class="mx-2">
                         <button type="submit" formaction="{% url 'trip_report_update' pk=trip_report.pk %}"
-                                class="submit-button small px-3 py-2">
+                                class="submit-button small-button px-3 py-2">
                             <small>Edit</small>
                         </button>
                     </form>
                     <form class="mx-1">
                         <button type="submit" formaction="{% url 'trip_report_delete' pk=trip_report.pk %}"
-                                class="submit-button small px-3 py-2">
+                                class="submit-button small-button px-3 py-2">
                             <small>Delete</small>
                         </button>
                     </form>
@@ -60,7 +62,7 @@
                  <form class="d-flex align-items-center my-2">
                     <h5 class="my-2">{{ peak.peak.display_name }} </h5>
                     <button type="submit" formaction="{% url 'peak_detail' pk=peak.peak.pk %}"
-                            class="submit-button small mx-2 px-3 py-2">
+                            class="submit-button small-button mx-2 px-3 py-2">
                         <small>View</small>
                     </button>
                 </form>

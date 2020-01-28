@@ -1,6 +1,6 @@
 from rest_framework.fields import CharField, ImageField, BooleanField
 from rest_framework.serializers import ModelSerializer
-from tracker.models import ReportTime, ReportImage, Tick, InterestedClimber
+from tracker.models import ReportTime, ReportImage, Tick, InterestedClimber, ReportComment
 
 
 class ReportTimeSerializer(ModelSerializer):
@@ -23,16 +23,22 @@ class ReportImageSerializer(ModelSerializer):
 class TickSerializer(ModelSerializer):
     first_name = CharField(source='climber.first_name', read_only=True)
     last_name = CharField(source='climber.last_name', read_only=True)
-    # This is returned to allow dynamic rendering of delete buttons when
-    # the user adds a tick via the api on the peak detail page
-    is_owner = BooleanField(default=True, read_only=True)
 
     class Meta:
         model = Tick
-        fields = ['id', 'date', 'peak', 'first_name', 'last_name', 'is_owner']
+        fields = ['id', 'date', 'peak', 'first_name', 'last_name']
 
 
 class InterestedClimberSerializer(TickSerializer):
     class Meta:
         model = InterestedClimber
-        fields = ['id', 'peak', 'first_name', 'last_name', 'is_owner']
+        fields = ['id', 'peak', 'first_name', 'last_name']
+
+
+class ReportCommentSerializer(ModelSerializer):
+    first_name = CharField(source='user.first_name', read_only=True)
+    last_name = CharField(source='user.last_name', read_only=True)
+
+    class Meta:
+        model = ReportComment
+        fields = ['id', 'trip_report', 'comment', 'time', 'first_name', 'last_name']

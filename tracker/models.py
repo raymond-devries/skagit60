@@ -107,6 +107,7 @@ def image_validation(sender, instance, **kwargs):
 
 class ReportComment(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
+    trip_report = models.ForeignKey(TripReport, models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 

@@ -37,3 +37,17 @@ class TickViewSet(ModelViewSet):
 class InterestedClimberViewSet(TickViewSet):
     queryset = InterestedClimber.objects.all()
     serializer_class = InterestedClimberSerializer
+
+
+class ReportCommentPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+
+
+class ReportCommentViewSet(ModelViewSet):
+    queryset = ReportComment.objects.all()
+    serializer_class = ReportCommentSerializer
+    permission_classes = [ReportCommentPermission]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

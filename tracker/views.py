@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core import serializers
+from skagit60 import settings
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
@@ -31,7 +32,7 @@ class PeakDetail(DetailView):
             ticks_dict.append(
                 {
                     'id': tick.id,
-                    'date': tick.date.strftime("%b %-d, %Y"),
+                    'date': tick.date.strftime(settings.REST_FRAMEWORK['DATE_FORMAT']),
                     'first_name': tick.climber.first_name,
                     'last_name': tick.climber.last_name,
                     'is_owner': tick.climber == self.request.user
@@ -61,9 +62,23 @@ class TripReportDetail(DetailView):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
         context['show_end'] = report.start != report.end and report.end is not None
-
         context['images'] = ReportImage.objects.filter(trip_report=report)
         context['times'] = ReportTime.objects.filter(trip_report=report)
+
+        comments = ReportComment.objects.filter(trip_report=report).order_by('-time')
+        comments_list = []
+        for comment in comments:
+            comments_list.append(
+                {
+                    'id': comment.id,
+                    'comment': comment.comment,
+                    'time': comment.time.strftime(settings.REST_FRAMEWORK['DATETIME_FORMAT']),
+                    'first_name': comment.user.first_name,
+                    'last_name': comment.user.last_name,
+                    'is_owner': comment.user == self.request.user
+                }
+            )
+        context['comments'] = json.dumps(comments_list)
 
         return context
 
