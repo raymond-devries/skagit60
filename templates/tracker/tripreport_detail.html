@@ -60,12 +60,14 @@
     <hr>
     <h4>Comments</h4>
     <div id="app">
+        {% if request.user.is_authenticated %}
         <div class="form-group">
             <label for="comment_text_box">Comment</label>
             <textarea class="form-control" id="comment_text_box" rows="6"
                       v-model="added_comment"></textarea>
             <button type="button" class="submit-button my-4" v-on:click="addComment">Add Comment</button>
         </div>
+        {% endif %}
         <div v-for="(comment, index) in comments" class="my-3">
             <div v-if="showEdit(comment.id)">
                 <textarea class="form-control" id="comment_text_box" rows="6" v-model="edited_comment">
@@ -90,7 +92,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <script type="text/javascript">
