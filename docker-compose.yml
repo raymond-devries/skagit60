@@ -6,6 +6,8 @@ services:
     command: gunicorn skagit60.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - db:/code/db/
+      - static:/code/staticfiles
+      - media:/code/mediafiles
     expose:
       - 8000
     restart: unless-stopped
@@ -19,6 +21,8 @@ services:
     volumes:
     - certs:/etc/letsencrypt/
     - nginx_conf:/etc/nginx/
+    - static:/code/staticfiles
+    - media:/code/mediafiles
     depends_on:
       - web
     restart: unless-stopped
@@ -27,3 +31,5 @@ volumes:
   db:
   certs:
   nginx_conf:
+  static:
+  media:

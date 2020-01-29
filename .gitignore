@@ -5,3 +5,4 @@ db.sqlite3
 /.env.docker
 production_env
 node_modules
+/staticfiles

@@ -1,5 +1,8 @@
 FROM nginx:mainline
 
+RUN mkdir code
+RUN mkdir code/staticfiles
+RUN mkdir code/mediafiles
 COPY nginx.conf /home/
 ADD start.sh /
 RUN chmod +x /start.sh
