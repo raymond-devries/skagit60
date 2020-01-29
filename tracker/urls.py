@@ -9,4 +9,5 @@ urlpatterns = [
     path('create_trip_report/<int:peak_id>', TripReportCreate.as_view(), name='trip_report_create_peak'),
     path('trip_report/<int:pk>/', TripReportUpdate.as_view(), name='trip_report_update'),
     path('delete_trip_report/<int:pk>/', TripReportDelete.as_view(), name='trip_report_delete'),
+    path('leader_board', LeaderBoard.as_view(), name='leader_board')
 ]

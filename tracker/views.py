@@ -1,11 +1,11 @@
-from django.contrib import messages
-from django.core import serializers
+from django.db.models import Count
+
 from skagit60 import settings
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, FormView, DeleteView, UpdateView, View
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, View
 from tracker.models import *
 from .forms import *
 
@@ -146,3 +146,11 @@ class TripReportDelete(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return TripReport.objects.filter(pk=self.kwargs['pk'], writer=self.request.user)
+
+
+class LeaderBoard(View):
+
+    def get(self, request, *args, **kwargs):
+        leaders = User.objects.annotate(num_of_peaks=Count('tick__peak', distinct=True))\
+            .filter(num_of_peaks__gt=0).order_by('-num_of_peaks')
+        return render(request, 'tracker/leaderboard.html', {'leaders': leaders})

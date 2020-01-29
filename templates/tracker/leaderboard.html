@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <h2 class="text-center">Leader Board</h2>
+        <hr>
+        <h6>This leader board counts the total number of unique peaks climbed</h6>
+        <ul class="list-of-peaks mx-2">
+            {% for leader in leaders %}
+                <li class="my-4 peaks">
+                    <b>{{ forloop.counter }}. </b>{{ leader.first_name }} {{ leader.last_name }}
+                    <b>{{ leader.num_of_peaks }}
+                        {% if leader.num_of_peaks == 1 %}
+                            peak
+                        {% else %}
+                            peaks
+                        {% endif %}</b>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}
