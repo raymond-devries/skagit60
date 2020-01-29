@@ -11,6 +11,7 @@ from django.views.generic import View
 from .forms import *
 from .tokens import account_activation_token
 from tracker.models import Tick, TripReport, InterestedClimber
+from django.utils.html import strip_tags
 
 
 class CustomLogin(LoginView):
@@ -30,13 +31,16 @@ class Signup(View):
             user.save()
             current_site = get_current_site(request)
             subject = 'Activate Your MySite Account'
-            message = render_to_string('registration/account_activation_email.html', {
+            email_context = {
                 'user': user,
+                'protocol': request.scheme,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
-            })
-            user.email_user(subject, message)
+            }
+            text_message = render_to_string('registration/account_activation_email.txt', email_context)
+            html_message = render_to_string('registration/account_activation_email.html', email_context)
+            user.email_user(subject, text_message, html_message=html_message)
             return redirect('account_activation_sent')
 
         else:
@@ -64,7 +68,7 @@ class Activate(View):
             user.profile.email_confirmed = True
             user.save()
             login(request, user)
-            messages.success(request, 'Your account has been successfully been activated.')
+            messages.success(request, 'Your account has been successfully been activated and you are now logged in.')
             return redirect('home')
         else:
             return redirect('login')

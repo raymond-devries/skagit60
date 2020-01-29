@@ -19,7 +19,7 @@ class SignupForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
         if User.objects.filter(email=email).exists():
-            raise ValidationError('Email already associated with an account)')
+            raise ValidationError('Email already associated with an account')
         if not ValidEmail.objects.filter(email=email).exists():
             raise ValidationError(
                 'This email is not on file with the Skagit Alpine Club. '
