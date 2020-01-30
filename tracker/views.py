@@ -156,6 +156,11 @@ class LeaderBoard(View):
         return render(request, 'tracker/leaderboard.html', {'leaders': leaders})
 
 
+class Map(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'tracker/map.html')
+
+
 class LoaderVerification(View):
     def get(self, request, *args, **kwargs):
         context = {'token': settings.LOADER_VERIFICATION_TOKEN}

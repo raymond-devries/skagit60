@@ -30,7 +30,7 @@ class Signup(View):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            subject = 'Activate Your MySite Account'
+            subject = 'Activate Your Skagit60 Account'
             email_context = {
                 'user': user,
                 'protocol': request.scheme,
