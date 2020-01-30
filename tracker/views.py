@@ -154,3 +154,9 @@ class LeaderBoard(View):
         leaders = User.objects.annotate(num_of_peaks=Count('tick__peak', distinct=True))\
             .filter(num_of_peaks__gt=0).order_by('-num_of_peaks')
         return render(request, 'tracker/leaderboard.html', {'leaders': leaders})
+
+
+class LoaderVerification(View):
+    def get(self, request, *args, **kwargs):
+        context = {'token': settings.LOADER_VERIFICATION_TOKEN}
+        return render(request, 'tracker/loader_verification.html', context)
