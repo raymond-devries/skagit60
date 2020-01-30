@@ -6,4 +6,18 @@ exit
 sudo snap install docker
 sudo usermod -a -G docker ubuntu
 
+git clone https://github.com/raymond-devries/skagit60.git
+""Copy over .env file""
+cd skagit60
+docker-compose up -d
+
+docker exec -it skagit60_nginx_1  /bin/bash
 certbot --nginx -d skagit60.com -d www.skagit60.com -d skagit60.skagitalpineclub.com -d www.skagit60.skagitalpineclub.com
+
+docker exec -it skagit60_web_1  /bin/bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py import_peaks
+python manage.py import_emails
+python manage.py collectstatic
+python manage.py createsuperuser
