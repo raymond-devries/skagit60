@@ -11,7 +11,6 @@ from django.views.generic import View
 from .forms import *
 from .tokens import account_activation_token
 from tracker.models import Tick, TripReport, InterestedClimber
-from django.utils.html import strip_tags
 
 
 class CustomLogin(LoginView):
@@ -71,6 +70,9 @@ class Activate(View):
             messages.success(request, 'Your account has been successfully been activated and you are now logged in.')
             return redirect('home')
         else:
+            messages.error(request, 'We were unable to activate your account. You may have already activated your'
+                                    'account. Please login. If you have any issues please contact'
+                                    'skagitalpineclubwebsite@gmail.com')
             return redirect('login')
 
 
