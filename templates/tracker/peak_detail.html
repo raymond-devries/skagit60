@@ -33,6 +33,8 @@
             </div>
             {% if request.user.is_authenticated %}
                 <div class="mb-3 col-md">
+                    <small v-show="this.show_date_error" style="color: red">The date must be after Jan 1,
+                        2020</small><br>
                     <label for="tick-date">Date you climbed this peak</label>
                     <input type="date" id="tick-date" class="form-control mb-3" v-model="tick_date">
                     <button type="button" class="submit-button" v-on:click="addTick">
@@ -89,6 +91,7 @@
     </div>
     <script type="text/javascript">
         const base_url = '{{ request.scheme }}' + '://' + '{{ request.get_host }}' + '/api/';
+        const jan_1_2020 = new Date(2020, 0, 1);
 
         let app = new Vue({
             el: '#app',
@@ -99,7 +102,8 @@
                 tick_date: null,
                 tick_api: (base_url + 'tick/'),
                 interested_climber_api: (base_url + 'interested_climber/'),
-                interested_climbers: {{ interested_climbers|safe }}
+                interested_climbers: {{ interested_climbers|safe }},
+                show_date_error: false,
             },
             computed: {
                 completed: function () {
@@ -118,6 +122,9 @@
                     } else
                         return 'No'
                 },
+                tick_date_object: function () {
+                    return new Date(this.tick_date)
+                },
                 climber_interest_index: function () {
                     function is_interested(element) {
                         return element.is_owner
@@ -131,17 +138,22 @@
             },
             methods: {
                 addTick: function () {
-                    axios.post(this.tick_api,
-                        {
-                            'peak': this.peak_id,
-                            'date': this.tick_date
-                        })
-                        .then(response => {
-                            let data = response.data;
-                            data['is_owner'] = true;
-                            this.ticks.push(data)
-                        })
-                        .catch(error => console.log(error))
+                    if (this.tick_date_object.getTime() < jan_1_2020.getTime()) {
+                        this.show_date_error = true
+                    } else {
+                        this.show_date_error = false;
+                        axios.post(this.tick_api,
+                            {
+                                'peak': this.peak_id,
+                                'date': this.tick_date
+                            })
+                            .then(response => {
+                                let data = response.data;
+                                data['is_owner'] = true;
+                                this.ticks.push(data)
+                            })
+                            .catch(error => console.log(error))
+                    }
                 },
                 removeTick: function (tick_id, index) {
                     axios.delete(this.tick_api + tick_id + '/')

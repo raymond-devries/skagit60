@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
+import datetime
 
 
 class Peak(models.Model):
@@ -27,6 +28,12 @@ class Tick(models.Model):
 
     def __str__(self):
         return self.climber.first_name + ' ' + self.climber.last_name + ', ' + str(self.peak)
+
+
+@receiver(pre_save, sender=Tick)
+def data_must_be_2020(instance, **kwargs):
+    if instance.date < datetime.date(2020, 1, 1):
+        raise ValidationError('Date must be after 2020')
 
 
 @receiver(post_save, sender=Tick)
