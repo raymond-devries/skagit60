@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         file_path = dirname(dirname(dirname(dirname(__file__)))) + '/contacts.csv'
         contacts = pd.read_csv(file_path)
-        contacts = contacts['email']
+        contacts = contacts['E-mail 1 - Value']
         contacts = contacts.str.lower()
 
         for email in contacts:
