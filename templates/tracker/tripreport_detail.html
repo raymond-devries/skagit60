@@ -38,7 +38,7 @@
                 <p>Weather: {{ tripreport.weather }}</p>
             {% endif %}
             {% if tripreport.report != '' %}
-                <p>{{ tripreport.report }}</p>
+                <p>{{ tripreport.report|linebreaks }}</p>
             {% endif %}
         </div>
         <div style="min-width: 200px">
