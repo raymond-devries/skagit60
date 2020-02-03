@@ -26,6 +26,27 @@ class PeakDetail(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['ticks'] = self.get_ticks_json()
+        context['interested_climbers'] = self.get_interested_climbers_json()
+        context['reports'] = TripReport.objects.filter(peak=self.get_object(), published=True)
+        return context
+
+    def get_interested_climbers_json(self):
+        interested_climbers = InterestedClimber.objects.filter(peak=self.get_object()).order_by('climber__first_name')
+        interested_climbers_list = []
+        for climber in interested_climbers:
+            interested_climbers_list.append(
+                {
+                    'id': climber.id,
+                    'first_name': climber.climber.first_name,
+                    'last_name': climber.climber.last_name,
+                    'is_owner': climber.climber == self.request.user
+                }
+            )
+        interested_climbers_json = json.dumps(interested_climbers_list)
+        return interested_climbers_json
+
+    def get_ticks_json(self):
         ticks = Tick.objects.filter(peak=self.get_object()).order_by('-date')
         ticks_dict = []
         for tick in ticks:
@@ -37,21 +58,8 @@ class PeakDetail(DetailView):
                     'last_name': tick.climber.last_name,
                     'is_owner': tick.climber == self.request.user
                 })
-        context['ticks'] = json.dumps(ticks_dict)
-        interested_climbers = InterestedClimber.objects.filter(peak=self.get_object()).order_by('climber__first_name')
-        interested_climbers_dict = []
-        for climber in interested_climbers:
-            interested_climbers_dict.append(
-                {
-                    'id': climber.id,
-                    'first_name': climber.climber.first_name,
-                    'last_name': climber.climber.last_name,
-                    'is_owner': climber.climber == self.request.user
-                }
-            )
-        context['interested_climbers'] = json.dumps(interested_climbers_dict)
-        context['reports'] = TripReport.objects.filter(peak=self.get_object(), published=True)
-        return context
+        ticks_json = json.dumps(ticks_dict)
+        return ticks_json
 
 
 class TripReportDetail(DetailView):
@@ -115,6 +123,27 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
+        times_json = self.get_report_times_json(report)
+        context['times'] = times_json
+        context['time_choices'] = json.dumps(ReportTime._meta.get_field('start_point').choices)
+
+        images, images_json = self.get_images(report)
+        context['images'] = images_json
+        context['max_uploads'] = TripReport.max_images - images.count()
+
+        return context
+
+    def get_images(self, report):
+        images = ReportImage.objects.filter(trip_report=report)
+        images_dict = {}
+        for image in images:
+            images_dict[image.id] = \
+                {'id': image.id,
+                 'url': image.image.url}
+        images_json = json.dumps(images_dict)
+        return images, images_json
+
+    def get_report_times_json(self, report):
         times = ReportTime.objects.filter(trip_report=report)
         times_dict = {}
         for time in times:
@@ -123,21 +152,8 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
                  'end_point_display': time.get_end_point_display(),
                  'time': str(time.time),
                  'id': time.id}
-
-        context['times'] = json.dumps(times_dict)
-        context['time_choices'] = json.dumps(ReportTime._meta.get_field('start_point').choices)
-
-        images = ReportImage.objects.filter(trip_report=report)
-        images_dict = {}
-        for image in images:
-            images_dict[image.id] = \
-                {'id': image.id,
-                 'url': image.image.url}
-
-        context['images'] = json.dumps(images_dict)
-        context['max_uploads'] = TripReport.max_images - images.count()
-
-        return context
+        times_json = json.dumps(times_dict)
+        return times_json
 
 
 class TripReportDelete(LoginRequiredMixin, DeleteView):
