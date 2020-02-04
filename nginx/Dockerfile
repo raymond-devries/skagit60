@@ -3,9 +3,18 @@ FROM nginx:mainline
 RUN mkdir code
 RUN mkdir code/staticfiles
 RUN mkdir code/mediafiles
-COPY nginx.conf /home/
+
+RUN mkdir home/conf.d
+
+COPY conf.d/nginx.conf /home/conf.d
+
 COPY NGINX_API_KEY.txt /
-COPY stub_status.conf /etc/nginx/conf.d/
+
+COPY conf.d/stub_status.conf /etc/nginx/conf.d/
+
+RUN rm /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/
+
 ADD start.sh /
 RUN chmod +x /start.sh
 RUN /start.sh
