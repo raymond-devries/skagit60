@@ -13,8 +13,8 @@ RUN pip install -r requirements.txt
 COPY . /code/
 RUN mkdir staticfiles
 RUN mkdir mediafiles
-#RUN python manage.py makemigrations
-#RUN python manage.py migrate
-#RUN python manage.py import_peaks
-#RUN python manage.py import_emails
-#RUN python manage.py collectstatic
+
+RUN python manage.py migrate
+RUN python manage.py import_peaks
+RUN python manage.py import_emails
+RUN python manage.py collectstatic

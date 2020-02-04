@@ -1,5 +1,4 @@
 from django.db.models import Count
-
 from skagit60 import settings
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
