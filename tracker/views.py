@@ -7,6 +7,12 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, View
 from tracker.models import *
 from .forms import *
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.contrib.admin.views.decorators import staff_member_required
+
+import subprocess
+import os
 
 
 class Home(ListView):
@@ -180,3 +186,16 @@ class LoaderVerification(View):
     def get(self, request, *args, **kwargs):
         context = {'token': settings.LOADER_VERIFICATION_TOKEN}
         return render(request, 'tracker/loader_verification.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class Status(View):
+    def get(self, request, *args, **kwargs):
+        current_directory = os.getcwd()
+        command = f'goaccess {current_directory}/nginx/logs/access.log -a -o ' \
+                  f'{current_directory}/templates/report.html --log-format=COMBINED'
+        subprocess.run(command, shell=True)
+        html_file_path = f'{current_directory}/templates/report.html'
+        with open(html_file_path) as file:
+            html = file.read()
+        return HttpResponse(html)

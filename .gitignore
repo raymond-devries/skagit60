@@ -7,4 +7,3 @@ production_env
 node_modules
 /staticfiles
 contacts.csv
-NGINX_API_KEY.txt

@@ -1,4 +1,0 @@
-#Rename this file to NGINX_API_KEY.txt and add your nginx amplify api key
-#Move this file to NGINX DIRECTORY
-#Delete these comments
-'YOUR_API_KEY'

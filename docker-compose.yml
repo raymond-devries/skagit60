@@ -8,6 +8,8 @@ services:
       - db:/code/db/
       - static:/code/staticfiles
       - media:/code/mediafiles
+      - nginx_logs:/code/nginx/logs
+      - fonts:/code/fonts
     expose:
       - 8000
     restart: unless-stopped
@@ -23,13 +25,18 @@ services:
     - nginx_conf:/etc/nginx/
     - static:/code/staticfiles
     - media:/code/mediafiles
+    - nginx_logs:/home/nginx_logs/
+    - fonts:/code/fonts
     depends_on:
       - web
     restart: unless-stopped
+
 
 volumes:
   db:
   certs:
   nginx_conf:
+  nginx_logs:
   static:
   media:
+  fonts:
