@@ -24,7 +24,7 @@ def test_home_view(factory):
 
 def test_number_of_peaks_completed(factory):
     mixer.cycle(16).blend(Peak, complete=True)
-    mixer.cycle(44).blend(Peak)
+    mixer.cycle(44).blend(Peak, complete=False)
 
     path = reverse('home')
     request = factory.get(path)
@@ -43,4 +43,34 @@ def test_peak_detail_view(factory):
     response = PeakDetail.as_view()(request, pk=6)
 
     assert response.status_code == 200
+
+
+def test_peak_detail_get_interested_climbers_json(factory):
+    peak = mixer.blend(Peak)
+    climber = mixer.blend(User)
+    climber2 = mixer.blend(User)
+    interested_climber = mixer.blend(InterestedClimber, climber=climber, peak=peak)
+    interested_climber2 = mixer.blend(InterestedClimber, climber=climber2, peak=peak)
+
+    path = reverse('peak_detail', kwargs={'pk': peak.id})
+    request = factory.get(path)
+
+    view = PeakDetail()
+    view.setup(request)
+
+    response_json = '''
+    [{
+        "id": 2,
+        "peak": 2,
+        "first_name": "ray",
+        "last_name": "dev"
+    },
+    {
+        "id": 3,
+        "peak": 5,
+        "first_name": "ray",
+        "last_name": "dev"
+    },]
+    '''
+
 

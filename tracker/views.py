@@ -138,7 +138,8 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
 
         return context
 
-    def get_images(self, report):
+    @staticmethod
+    def get_images(report):
         images = ReportImage.objects.filter(trip_report=report)
         images_dict = {}
         for image in images:
@@ -148,7 +149,8 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
         images_json = json.dumps(images_dict)
         return images, images_json
 
-    def get_report_times_json(self, report):
+    @staticmethod
+    def get_report_times_json(report):
         times = ReportTime.objects.filter(trip_report=report)
         times_dict = {}
         for time in times:
