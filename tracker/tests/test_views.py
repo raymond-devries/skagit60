@@ -22,6 +22,14 @@ def test_home_view(factory):
     assert response.status_code == 200
 
 
+def test_about_view(factory):
+    path = reverse('about')
+    request = factory.get(path)
+    response = About.as_view()(request)
+
+    assert response.status_code == 200
+
+
 def test_number_of_peaks_completed(factory):
     mixer.cycle(16).blend(Peak, complete=True)
     mixer.cycle(44).blend(Peak, complete=False)

@@ -4,7 +4,7 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, View
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, View, TemplateView
 from tracker.models import *
 from .forms import *
 from django.http import HttpResponse
@@ -24,6 +24,10 @@ class Home(ListView):
         context = super().get_context_data(**kwargs)
         context['number_of_peaks_completed'] = Peak.objects.filter(complete=True).count()
         return context
+
+
+class About(TemplateView):
+    template_name = 'tracker/about.html'
 
 
 class PeakDetail(DetailView):
