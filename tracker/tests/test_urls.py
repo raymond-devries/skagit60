@@ -6,6 +6,11 @@ def test_peak_detail_url():
     assert resolve(path).view_name == 'peak_detail'
 
 
+def test_about_url():
+    path = reverse('about')
+    assert resolve(path).view_name == 'about'
+
+
 def test_trip_report_detail_url():
     path = reverse('trip_report_detail', kwargs={'pk': 1})
     assert resolve(path).view_name == 'trip_report_detail'

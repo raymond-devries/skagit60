@@ -62,7 +62,7 @@ def interest_peak_only_once(sender, instance, **kwargs):
 
 
 class TripReport(models.Model):
-    max_images = 4
+    max_images = 8
     difficulty_choices = [
         (1, 'Easy'),
         (2, 'Moderate'),
