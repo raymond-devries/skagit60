@@ -10,5 +10,6 @@ Pillow
 # testing packages
 pytest
 pytest-django
-factory_boy
 pytest-xdist
+factory_boy
+coverage

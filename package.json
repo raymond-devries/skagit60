@@ -1,9 +1,0 @@
-{
-  "name": "skagit60",
-  "version": "1.0.0",
-  "dependencies": {
-    "filepond": "^4.9.5",
-    "vue": "^2.6.11",
-    "vue-filepond": "^6.0.2"
-  }
-}

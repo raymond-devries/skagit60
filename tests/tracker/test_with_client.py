@@ -1,13 +1,11 @@
 import pytest
 from tests.factories import *
-import factory.random
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
 def mock_db_return_user():
-    factory.random.reseed_random('skagit60')
     user = UserFactory()
     peak = PeakFactory(pk=1)
     TickFactory(peak=peak, climber=user)
@@ -23,6 +21,7 @@ def mock_db_return_user():
 anonymous_user_urls = \
     [('/', 200),
      ('/about', 200),
+     ('/peak/1', 200),
      ('/trip_report_view/1', 200),
      ('/create_trip_report', 302),
      ('/create_trip_report/1', 302),
@@ -43,6 +42,7 @@ def test_anonymous_client_status_codes(url, status_code, client, mock_db_return_
 logged_in_user_urls = \
     [('/', 200),
      ('/about', 200),
+     ('/peak/1', 200),
      ('/trip_report_view/1', 200),
      ('/create_trip_report', 302),
      ('/create_trip_report/1', 302),

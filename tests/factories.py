@@ -1,6 +1,8 @@
 from factory import DjangoModelFactory, Faker, SubFactory, django
-
+import factory.random
 from tracker.models import *
+
+factory.random.reseed_random('skagit60')
 
 
 class UserFactory(DjangoModelFactory):
@@ -17,7 +19,7 @@ class PeakFactory(DjangoModelFactory):
     class Meta:
         model = Peak
 
-    name = Faker('name')
+    name = Faker('sentence', nb_words=2)
     display_name = Faker('sentence', nb_words=2)
     elevation = Faker('random_int', min=0, max=10000)
     lat = Faker('latitude')

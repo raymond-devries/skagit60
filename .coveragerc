@@ -1,0 +1,10 @@
+[run]
+branch = True
+include =
+    skagit60/*
+    tracker/*
+    users/*
+
+[report]
+omit =
+    *migrations*
