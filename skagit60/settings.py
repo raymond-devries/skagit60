@@ -156,8 +156,10 @@ else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 STATIC_URL = '/staticfiles/'
+# noinspection PyUnresolvedReferences
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/mediafiles/'
+# noinspection PyUnresolvedReferences
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 

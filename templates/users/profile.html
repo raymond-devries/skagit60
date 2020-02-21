@@ -34,10 +34,16 @@
         <h3><b>Trip Reports</b></h3>
         {% if trip_reports.exists %}
             {% for trip_report in trip_reports %}
-                <div class="d-flex align-items-center">
-                    <h5 class="my-2"><a href="{% url 'trip_report_detail' pk=trip_report.id %}">
-                        {{ trip_report.peak.display_name }} {{ trip_report.start }}
-                    </a></h5>
+                <div class="d-flex align-items-center my-3">
+                    <h5 class="my-2">
+                        {% if trip_report.published %}
+                            <a href="{% url 'trip_report_detail' pk=trip_report.id %}">
+                                {{ trip_report.peak.display_name }} {{ trip_report.start }}
+                            </a>
+                        {% else %}
+                            {{ trip_report.peak.display_name }} {{ trip_report.start }}- Draft
+                        {% endif %}
+                    </h5>
                     <form class="mx-2">
                         <button type="submit" formaction="{% url 'trip_report_update' pk=trip_report.pk %}"
                                 class="submit-button small-button px-3 py-2">
@@ -59,7 +65,7 @@
             <hr>
             <h3><b>Peaks that you're interested in climbing</b></h3>
             {% for peak in peak_interests %}
-                 <form class="d-flex align-items-center my-2">
+                <form class="d-flex align-items-center my-2">
                     <h5 class="my-2">{{ peak.peak.display_name }} </h5>
                     <button type="submit" formaction="{% url 'peak_detail' pk=peak.peak.pk %}"
                             class="submit-button small-button mx-2 px-3 py-2">
