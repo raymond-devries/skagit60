@@ -81,7 +81,11 @@ class TripReportDetail(DetailView):
         context['show_end'] = report.start != report.end and report.end is not None
         context['images'] = ReportImage.objects.filter(trip_report=report)
         context['times'] = ReportTime.objects.filter(trip_report=report)
+        context['comments'] = self.get_comments_json(report)
 
+        return context
+
+    def get_comments_json(self, report):
         comments = ReportComment.objects.filter(trip_report=report).order_by('-time')
         comments_list = []
         for comment in comments:
@@ -95,9 +99,9 @@ class TripReportDetail(DetailView):
                     'is_owner': comment.user == self.request.user
                 }
             )
-        context['comments'] = json.dumps(comments_list)
+        comments_json = json.dumps(comments_list)
 
-        return context
+        return comments_json
 
 
 class TripReportCreate(LoginRequiredMixin, View):
@@ -132,8 +136,7 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
-        times_json = self.get_report_times_json(report)
-        context['times'] = times_json
+        context['times'] = self.get_report_times_json(report)
         context['time_choices'] = json.dumps(ReportTime._meta.get_field('start_point').choices)
 
         images, images_json = self.get_images(report)

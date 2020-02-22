@@ -87,4 +87,5 @@ class ReportCommentFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     trip_report = SubFactory(TripReportFactory)
+
     comment = Faker('text', max_nb_chars=1000)
