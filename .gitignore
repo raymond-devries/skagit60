@@ -9,3 +9,4 @@ node_modules
 contacts.csv
 .idea
 /.coverage
+/templates/report.html

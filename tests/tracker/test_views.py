@@ -210,3 +210,30 @@ class TestTripReportDetailView:
 
         assert response_json == expected_json_as_py_object
 
+
+class TestReportCreate:
+    def test_trip_report_create_no_kwarg(self, client):
+        user = UserFactory()
+
+        path = reverse('trip_report_create')
+        client.force_login(user)
+        client.get(path)
+
+        assert TripReport.objects.filter(writer=user).exists()
+
+    def test_trip_report_create_kwarg(self, client):
+        user = UserFactory()
+        peak = PeakFactory(pk=1)
+
+        client.force_login(user)
+        client.get('/create_trip_report/1')
+
+        assert TripReport.objects.filter(writer=user, peak=peak).exists()
+
+    def test_trip_report_create_incorrect_kwarg(self, client):
+        user = UserFactory()
+
+        client.force_login(user)
+        response = client.get('/create_trip_report/56')
+
+        assert response.status_code == 404

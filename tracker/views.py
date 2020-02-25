@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, View, TemplateView
 from tracker.models import *
 from .forms import *
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 
@@ -111,10 +111,15 @@ class TripReportCreate(LoginRequiredMixin, View):
         # an instance must be created to ensure that apis that add related models will work during trip report creation
         user = self.request.user
         try:
-            trip_report = TripReport(writer=user, peak_id=self.kwargs['peak_id'])
+            try:
+                peak = Peak.objects.get(id=self.kwargs['peak_id'])
+            except Peak.DoesNotExist:
+                raise Http404
+            trip_report = TripReport(writer=user, peak=peak)
+            trip_report.save()
         except KeyError:
             trip_report = TripReport(writer=user)
-        trip_report.save()
+            trip_report.save()
         return redirect('trip_report_update', pk=trip_report.pk)
 
 
