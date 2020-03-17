@@ -79,6 +79,8 @@ class TripReport(models.Model):
     difficulty = models.IntegerField(choices=difficulty_choices, default=1)
     route_name = models.CharField(max_length=150, null=True, blank=True)
     snow_level = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
+    elevation_gain = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
+    total_miles = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True)
     weather = models.TextField(null=True, blank=True)
     gear = models.TextField(null=True, blank=True)
     report = models.TextField(null=True, blank=True)
