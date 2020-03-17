@@ -3,20 +3,22 @@
 {% block content %}
     <div>
         <h2 class="text-center">Leader Board</h2>
-        <hr>
-        <h6>This leader board counts the total number of unique peaks climbed</h6>
-        <ul class="list-of-peaks mx-2">
+        <table class="table text-white my-4">
+        <caption class="text-white text-center" style="caption-side: top">This leader board counts the total number of unique peaks climbed</caption>
+            <thead>
+            <tr>
+                <th scope="col">Place</th>
+                <th scope="col">Name</th>
+                <th scope="col"># of peaks</th>
+            </tr>
+            </thead>
             {% for leader in leaders %}
-                <li class="my-4 peaks">
-                    <b>{{ forloop.counter }}. </b>{{ leader.first_name }} {{ leader.last_name }}
-                    <b>{{ leader.num_of_peaks }}
-                        {% if leader.num_of_peaks == 1 %}
-                            peak
-                        {% else %}
-                            peaks
-                        {% endif %}</b>
-                </li>
+                <tr>
+                    <td><b>{{ forloop.counter }} </b></td>
+                    <td>{{ leader.first_name }} {{ leader.last_name }}</td>
+                    <td><b>{{ leader.num_of_peaks }}</b></td>
+                </tr>
             {% endfor %}
-        </ul>
+        </table>
     </div>
 {% endblock content %}
