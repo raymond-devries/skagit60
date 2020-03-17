@@ -88,14 +88,14 @@ class TripReport(models.Model):
 
 
 class ReportTime(models.Model):
-    points = [
+    locations = [
         ('TH', 'Trail Head'),
         ('C', 'Camp'),
         ('S', 'Summit')
     ]
     trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
-    start_point = models.CharField(max_length=30, choices=points)
-    end_point = models.CharField(max_length=30, choices=points)
+    start_point = models.CharField(max_length=30, choices=locations)
+    end_point = models.CharField(max_length=30, choices=locations)
     time = models.DecimalField(decimal_places=1, max_digits=3)
 
 
