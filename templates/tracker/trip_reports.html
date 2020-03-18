@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load define_action %}
+
+{% block content %}
+    <div>
+        <h2 class="text-center mb-4">Trip Reports</h2>
+        <table class="table text-white">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Writer</th>
+                <th scope="col">Peak</th>
+                <th scope="col">Date</th>
+            </tr>
+            </thead>
+            {% for trip_report in trip_reports %}
+                <tr>
+                    <td><a href="{% url 'trip_report_detail' pk=trip_report.id %}">View</a></td>
+                    <td>
+                        {{ trip_report.writer.first_name }} {{ trip_report.writer.last_name }}
+                    </td>
+                    <td>{{ trip_report.peak.display_name }}</td>
+                    <td>{{ trip_report.start }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock content %}

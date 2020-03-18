@@ -11,6 +11,7 @@ urlpatterns = [
     path('create_trip_report/<int:peak_id>', TripReportCreate.as_view(), name='trip_report_create_peak'),
     path('trip_report/<int:pk>', TripReportUpdate.as_view(), name='trip_report_update'),
     path('delete_trip_report/<int:pk>', TripReportDelete.as_view(), name='trip_report_delete'),
+    path('trip_reports', TripReports.as_view(), name='trip_reports'),
     path('leader_board', LeaderBoard.as_view(), name='leader_board'),
     path('map', Map.as_view(), name='map'),
     path('status', Status.as_view(), name='status'),

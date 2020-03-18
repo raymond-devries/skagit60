@@ -47,6 +47,9 @@
                 <a class="nav-link" href="{% url 'trip_report_create' %}">Create Trip Report</a>
             </li>
             <li class="nav-item active">
+                <a class="nav-link" href="{% url 'trip_reports' %}">Trip Reports</a>
+            </li>
+            <li class="nav-item active">
                 <a class="nav-link" href="{% url 'leader_board' %}">Leader Board</a>
             </li>
             <li class="nav-item active">
@@ -55,6 +58,7 @@
             <li class="nav-item active">
                 <a class="nav-link" href="{% url 'about' %}">About</a>
             </li>
+
         </ul>
         <ul class="navbar-nav my-2 my-lg-0">
             {% if user.is_authenticated %}

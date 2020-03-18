@@ -191,6 +191,13 @@ class LeaderBoard(View):
         return render(request, 'tracker/leaderboard.html', {'leaders': leaders})
 
 
+class TripReports(ListView):
+    model = TripReport
+    template_name = 'tracker/trip_reports.html'
+    context_object_name = 'trip_reports'
+    queryset = TripReport.objects.filter(published=True).order_by('-start')
+
+
 class Map(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'tracker/map.html')
