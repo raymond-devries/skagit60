@@ -305,3 +305,25 @@ class TestTripReportUpdate:
         assert json.loads(response_json) == expected_json_as_py_object
 
 
+class TestTripReportDelete:
+    def test_delete_trip_report_success(self, client):
+        user = UserFactory()
+        TripReportFactory(pk=1, writer=user)
+
+        client.force_login(user)
+        path = reverse('trip_report_delete', kwargs={'pk': 1})
+        client.post(path)
+
+        assert not TripReport.objects.filter(pk=1).exists()
+
+    def test_delete_trip_report_failure(self, client):
+        user = UserFactory()
+        TripReportFactory(pk=1)
+
+        client.force_login(user)
+        path = reverse('trip_report_delete', kwargs={'pk': 1})
+        client.post(path)
+
+        assert TripReport.objects.filter(pk=1).exists()
+
+
