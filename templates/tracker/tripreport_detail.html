@@ -25,6 +25,12 @@
             {% if tripreport.snow_level is not None %}
                 <p>Snow Level: {{ tripreport.snow_level }} ft</p>
             {% endif %}
+            {% if tripreport.elevation_gain is not None %}
+                <p>Elevation Gain: {{ tripreport.elevation_gain }} ft</p>
+            {% endif %}
+            {% if tripreport.total_miles is not None %}
+                <p>Total Miles: {{ tripreport.total_miles }} mi</p>
+            {% endif %}
             {% if tripreport.gear != '' %}
                 <p>Gear: {{ tripreport.gear }}</p>
             {% endif %}
