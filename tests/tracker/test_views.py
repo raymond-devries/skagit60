@@ -327,3 +327,9 @@ class TestTripReportDelete:
         assert TripReport.objects.filter(pk=1).exists()
 
 
+def test_leader_board_view(rf):
+    path = reverse('leader_board')
+    request = rf.get(path)
+    response = About.as_view()(request)
+
+    assert response.status_code == 200
