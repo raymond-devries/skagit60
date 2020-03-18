@@ -30,7 +30,6 @@ anonymous_user_urls = \
      ('/delete_trip_report/1', 302),
      ('/trip_reports', 200),
      ('/leader_board', 200),
-     ('/map', 200),
      ('/status', 302),
      ('/loaderio-ae015b95ea02363e914209fe5f684554', 200)]
 
@@ -55,7 +54,6 @@ logged_in_user_urls = \
      ('/delete_trip_report/5436123', 404),
      ('/trip_reports', 200),
      ('/leader_board', 200),
-     ('/map', 200),
      ('/status', 302),
      ('/loaderio-ae015b95ea02363e914209fe5f684554', 200)]
 

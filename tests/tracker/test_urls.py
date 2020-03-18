@@ -41,11 +41,6 @@ def test_leader_board_url():
     assert resolve(path).view_name == 'leader_board'
 
 
-def test_map_url():
-    path = reverse('map')
-    assert resolve(path).view_name == 'map'
-
-
 def test_loader_verification_url():
     path = reverse('loader_verification')
     assert resolve(path).view_name == 'loader_verification'

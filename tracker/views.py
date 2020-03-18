@@ -198,11 +198,6 @@ class TripReports(ListView):
     queryset = TripReport.objects.filter(published=True).order_by('-start')
 
 
-class Map(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'tracker/map.html')
-
-
 class LoaderVerification(View):
     def get(self, request, *args, **kwargs):
         context = {'token': settings.LOADER_VERIFICATION_TOKEN}
