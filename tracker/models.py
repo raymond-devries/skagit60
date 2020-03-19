@@ -31,7 +31,7 @@ class Tick(models.Model):
 
 
 @receiver(pre_save, sender=Tick)
-def data_must_be_2020(instance, **kwargs):
+def date_must_be_2020(instance, **kwargs):
     if instance.date < datetime.date(2020, 1, 1):
         raise ValidationError('Date must be after 2020')
 
