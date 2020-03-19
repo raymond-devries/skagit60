@@ -243,7 +243,7 @@ class TestTripReportUpdate:
     @pytest.fixture
     def setup_trip_report_update_view(self, rf):
         user = UserFactory()
-        trip_report = TripReportFactory(pk=1, writer=user)
+        trip_report = TripReportFactory(pk=1, writer=user, published=False)
         ReportTimeFactory(trip_report=trip_report, pk=1, time=6)
         ReportTimeFactory(trip_report=trip_report, pk=2, time=7)
         ReportImageFactory(trip_report=trip_report, pk=1)
@@ -260,14 +260,29 @@ class TestTripReportUpdate:
 
         return view
 
-    def test_trip_report_view_status_code(self, setup_trip_report_update_view):
+    def test_trip_report_update_status_code(self, setup_trip_report_update_view):
         assert setup_trip_report_update_view.response_class.status_code == 200
 
-    def test_get_context_max_images(self, setup_trip_report_update_view):
+    def test_trip_report_update_form_valid_not_published(self, setup_trip_report_update_view):
+        form = setup_trip_report_update_view.get_form()
+        setup_trip_report_update_view.form_valid(form)
+
+        assert setup_trip_report_update_view.get_object().published is False
+
+    def test_trip_report_update_form_valid_published(self, setup_trip_report_update_view):
+        form = setup_trip_report_update_view.get_form()
+        post_request = setup_trip_report_update_view.request.POST
+        post_request._mutable = True
+        post_request['publish_report'] = 'Publish Report'
+        setup_trip_report_update_view.form_valid(form)
+
+        assert setup_trip_report_update_view.get_object().published is True
+
+    def test_trip_report_update_get_context_max_images(self, setup_trip_report_update_view):
         context = setup_trip_report_update_view.get_context_data()
         assert context['max_uploads'] == TripReport.max_images - 2
 
-    def test_get_images(self, setup_trip_report_update_view):
+    def test_trip_report_update_get_images(self, setup_trip_report_update_view):
         report = setup_trip_report_update_view.get_object()
         expected_images = ReportImage.objects.filter(pk__range=(1, 2))
         response_images, response_images_json = setup_trip_report_update_view.get_images(report)
@@ -286,7 +301,7 @@ class TestTripReportUpdate:
         assert list(response_images) == list(expected_images)
         assert json.loads(response_images_json) == expected_json_as_py_object
 
-    def test_get_report_times_json(self, setup_trip_report_update_view):
+    def test_trip_report_update_get_report_times_json(self, setup_trip_report_update_view):
         report = setup_trip_report_update_view.get_object()
         time1 = ReportTime.objects.get(pk=1)
         time2 = ReportTime.objects.get(pk=2)
@@ -329,6 +344,43 @@ class TestTripReportDelete:
 
 def test_leader_board_view(rf):
     path = reverse('leader_board')
+    request = rf.get(path)
+    response = About.as_view()(request)
+
+    assert response.status_code == 200
+
+
+class TestTripReportsView:
+    @pytest.fixture
+    def setup_trip_reports_view(self, rf):
+        TripReportFactory.create_batch(6, published=True)
+        TripReportFactory.create_batch(9, published=False)
+        path = reverse('trip_reports')
+        request = rf.get(path)
+        request.user = AnonymousUser
+
+        view = TripReports()
+        view.setup(request)
+
+        return view
+
+    def test_trip_reports_status_code(self, setup_trip_reports_view):
+        assert setup_trip_reports_view.response_class.status_code == 200
+
+    def test_trip_reports_queryset(self, setup_trip_reports_view):
+        assert setup_trip_reports_view.queryset.count() == 6
+
+
+def test_loader_verification_view(rf):
+    path = reverse('loader_verification')
+    request = rf.get(path)
+    response = About.as_view()(request)
+
+    assert response.status_code == 200
+
+
+def test_status_view(rf):
+    path = reverse('status')
     request = rf.get(path)
     response = About.as_view()(request)
 
