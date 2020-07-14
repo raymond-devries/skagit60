@@ -6,6 +6,7 @@ gunicorn
 python-decouple
 pandas
 Pillow
+pre-commit
 
 # testing packages
 pytest
