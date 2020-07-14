@@ -24,16 +24,22 @@ class Peak(models.Model):
 class Tick(models.Model):
     climber = models.ForeignKey(User, on_delete=models.PROTECT)
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT)
-    date = models.DateField(help_text='The date you summited the peak.')
+    date = models.DateField(help_text="The date you summited the peak.")
 
     def __str__(self):
-        return self.climber.first_name + ' ' + self.climber.last_name + ', ' + str(self.peak)
+        return (
+            self.climber.first_name
+            + " "
+            + self.climber.last_name
+            + ", "
+            + str(self.peak)
+        )
 
 
 @receiver(pre_save, sender=Tick)
 def date_must_be_2020(instance, **kwargs):
     if instance.date < datetime.date(2020, 1, 1):
-        raise ValidationError('Date must be after 2020')
+        raise ValidationError("Date must be after 2020")
 
 
 @receiver(post_save, sender=Tick)
@@ -58,17 +64,14 @@ class InterestedClimber(models.Model):
 @receiver(pre_save, sender=InterestedClimber)
 def interest_peak_only_once(sender, instance, **kwargs):
     if sender.objects.filter(climber=instance.climber, peak=instance.peak).exists():
-        raise ValidationError('A climber can only be interested in a particular peak once')
+        raise ValidationError(
+            "A climber can only be interested in a particular peak once"
+        )
 
 
 class TripReport(models.Model):
     max_images = 8
-    difficulty_choices = [
-        (1, 'Easy'),
-        (2, 'Moderate'),
-        (3, 'Difficult'),
-        (4, 'Epic')
-    ]
+    difficulty_choices = [(1, "Easy"), (2, "Moderate"), (3, "Difficult"), (4, "Epic")]
 
     writer = models.ForeignKey(User, on_delete=models.PROTECT)
     peak = models.ForeignKey(Peak, on_delete=models.PROTECT, null=True)
@@ -78,9 +81,15 @@ class TripReport(models.Model):
     end = models.DateField(null=True, blank=True)
     difficulty = models.IntegerField(choices=difficulty_choices, default=1)
     route_name = models.CharField(max_length=150, null=True, blank=True)
-    snow_level = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
-    elevation_gain = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
-    total_miles = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True)
+    snow_level = models.PositiveIntegerField(
+        validators=[MaxValueValidator(15000)], null=True, blank=True
+    )
+    elevation_gain = models.PositiveIntegerField(
+        validators=[MaxValueValidator(15000)], null=True, blank=True
+    )
+    total_miles = models.DecimalField(
+        decimal_places=2, max_digits=4, null=True, blank=True
+    )
     weather = models.TextField(null=True, blank=True)
     gear = models.TextField(null=True, blank=True)
     report = models.TextField(null=True, blank=True)
@@ -90,11 +99,7 @@ class TripReport(models.Model):
 
 
 class ReportTime(models.Model):
-    locations = [
-        ('TH', 'Trail Head'),
-        ('C', 'Camp'),
-        ('S', 'Summit')
-    ]
+    locations = [("TH", "Trail Head"), ("C", "Camp"), ("S", "Summit")]
     trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
     start_point = models.CharField(max_length=30, choices=locations)
     end_point = models.CharField(max_length=30, choices=locations)
@@ -103,15 +108,18 @@ class ReportTime(models.Model):
 
 class ReportImage(models.Model):
     trip_report = models.ForeignKey(TripReport, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/trip_reports', null=True)
+    image = models.ImageField(upload_to="images/trip_reports", null=True)
 
 
 @receiver(pre_save, sender=ReportImage)
 def image_validation(sender, instance, **kwargs):
-    if sender.objects.filter(trip_report=instance.trip_report).count() >= TripReport.max_images:
-        raise ValidationError('No more images allowed')
+    if (
+        sender.objects.filter(trip_report=instance.trip_report).count()
+        >= TripReport.max_images
+    ):
+        raise ValidationError("No more images allowed")
     if instance.image.size > 5242880:
-        raise ValidationError('The image is more than 5mb')
+        raise ValidationError("The image is more than 5mb")
 
 
 class ReportComment(models.Model):
@@ -119,7 +127,3 @@ class ReportComment(models.Model):
     trip_report = models.ForeignKey(TripReport, models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
-
-
-
-

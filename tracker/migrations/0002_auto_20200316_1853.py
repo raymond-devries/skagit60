@@ -7,18 +7,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tracker', '0001_initial'),
+        ("tracker", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tripreport',
-            name='elevation_gain',
-            field=models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(15000)]),
+            model_name="tripreport",
+            name="elevation_gain",
+            field=models.PositiveIntegerField(
+                blank=True,
+                null=True,
+                validators=[django.core.validators.MaxValueValidator(15000)],
+            ),
         ),
         migrations.AddField(
-            model_name='tripreport',
-            name='total_miles',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True),
+            model_name="tripreport",
+            name="total_miles",
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=4, null=True
+            ),
         ),
     ]

@@ -20,9 +20,3 @@ class EmailBackend(ModelBackend):
             return user
 
         return None
-
-
-
-
-
-

@@ -5,15 +5,13 @@ from os.path import dirname
 
 
 class Command(BaseCommand):
-    help = 'Imports valid emails'
+    help = "Imports valid emails"
 
     def handle(self, *args, **options):
-        file_path = dirname(dirname(dirname(dirname(__file__)))) + '/contacts.csv'
+        file_path = dirname(dirname(dirname(dirname(__file__)))) + "/contacts.csv"
         contacts = pd.read_csv(file_path)
-        contacts = contacts['E-mail 1 - Value']
+        contacts = contacts["E-mail 1 - Value"]
         contacts = contacts.str.lower()
 
         for email in contacts:
-            ValidEmail.objects.get_or_create(
-                email=email
-            )
+            ValidEmail.objects.get_or_create(email=email)
