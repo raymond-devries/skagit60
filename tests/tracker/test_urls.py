@@ -44,4 +44,3 @@ def test_leader_board_url():
 def test_loader_verification_url():
     path = reverse('loader_verification')
     assert resolve(path).view_name == 'loader_verification'
-
