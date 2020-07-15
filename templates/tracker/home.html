@@ -3,24 +3,57 @@
 {% load define_action %}
 
 {% block content %}
-    <div>
+    <div id="app">
         <h2 class="text-center">Peaks Completed</h2>
         <h1 class="text-center">{{ number_of_peaks_completed }}/60</h1>
         <hr>
-        <ul class="list-of-peaks mx-2">
-            {% for peak in peaks %}
-                {% if peak.complete %}
-                    {% define "completed-peak" as completed %}
-                {% else %}
-                    {% define "uncompleted-peak" as completed %}
-                {% endif %}
-                <li class="my-4 peaks">
-                    <a href="{% url 'peak_detail' pk=peak.pk %}" class="remove-link-style py-2 px-3 {{ completed }}">
-                        {{ peak.id }}. {{ peak }}
-                    </a>
-                </li>
+        <button class="text-center submit-button h5" v-on:click="show_filter = !show_filter">
+            Filter</button>
+        <div v-if="show_filter" class="text-center">
+            <hr>
+            <button class="submit-button my-2" v-on:click="selected = 'all'">All</button>
+            <button class="submit-button my-2" v-on:click="selected = 'complete'">Complete</button>
+            <button class="submit-button my-2" v-on:click="selected = 'incomplete'">
+                Incomplete</button>
+            <button class="submit-button my-2" v-on:click="selected = 'recent'">Most Recently
+                Completed</button>
+            <hr>
+        </div>
 
-            {% endfor %}
+        <ul v-for="peak in peaks(selected)" class="list-of-peaks mx-2">
+            <li class="my-4 peaks">
+                <a :href="peak.url" class="remove-link-style py-2 px-3"
+                   :class="{'completed-peak': peak.complete, 'uncompleted-peak': !peak.complete}">
+                    [[peak.pk]]. [[peak.name]]
+                </a>
+            </li>
         </ul>
     </div>
+    <script type="text/javascript">
+        let app = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                all_peaks: {{ all_peaks | safe}},
+                complete_peaks: {{ complete_peaks | safe }},
+                incomplete_peaks: {{ incomplete_peaks | safe }},
+                most_recent: {{ most_recently_completed | safe }},
+                selected: 'all',
+                show_filter: false
+            },
+            methods: {
+                peaks(peaks_requested) {
+                    if (peaks_requested === 'complete') {
+                        return this.complete_peaks
+                    } else if (peaks_requested === 'incomplete') {
+                        return this.incomplete_peaks
+                    } else if (peaks_requested === 'recent') {
+                        return this.most_recent
+                    } else {
+                        return this.all_peaks
+                    }
+                }
+            }
+        })
+    </script>
 {% endblock content %}

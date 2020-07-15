@@ -3,6 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from tracker.views import *
 from tests.factories import *
+import json
 
 pytestmark = pytest.mark.django_db
 
@@ -17,7 +18,6 @@ class TestHomeView:
         request = rf.get(path)
         view = Home()
         view.setup(request)
-        view.object_list = view.get_queryset()
 
         return view
 
@@ -30,9 +30,110 @@ class TestHomeView:
         assert response.status_code == 200
 
     def test_home_view_number_of_peaks_completed(self, setup_home_view):
-        context = setup_home_view.get_context_data()
-
-        assert context["number_of_peaks_completed"] == 16
+        view = setup_home_view
+        computed_json = view.get_peaks_json(
+            view.request, Peak.objects.filter(complete=True)
+        )
+        computed_json = json.loads(computed_json)
+        expected_json_as_py_object = [
+            {
+                "complete": True,
+                "name": "Less husband.",
+                "pk": 1,
+                "url": "http://testserver/peak/1",
+            },
+            {
+                "complete": True,
+                "name": "Open.",
+                "pk": 2,
+                "url": "http://testserver/peak/2",
+            },
+            {
+                "complete": True,
+                "name": "Take Mrs.",
+                "pk": 3,
+                "url": "http://testserver/peak/3",
+            },
+            {
+                "complete": True,
+                "name": "My respond.",
+                "pk": 4,
+                "url": "http://testserver/peak/4",
+            },
+            {
+                "complete": True,
+                "name": "Result.",
+                "pk": 5,
+                "url": "http://testserver/peak/5",
+            },
+            {
+                "complete": True,
+                "name": "Southern.",
+                "pk": 6,
+                "url": "http://testserver/peak/6",
+            },
+            {
+                "complete": True,
+                "name": "Fund goal.",
+                "pk": 7,
+                "url": "http://testserver/peak/7",
+            },
+            {
+                "complete": True,
+                "name": "Value.",
+                "pk": 8,
+                "url": "http://testserver/peak/8",
+            },
+            {
+                "complete": True,
+                "name": "Consider.",
+                "pk": 9,
+                "url": "http://testserver/peak/9",
+            },
+            {
+                "complete": True,
+                "name": "Position stand.",
+                "pk": 10,
+                "url": "http://testserver/peak/10",
+            },
+            {
+                "complete": True,
+                "name": "Continue.",
+                "pk": 11,
+                "url": "http://testserver/peak/11",
+            },
+            {
+                "complete": True,
+                "name": "Course.",
+                "pk": 12,
+                "url": "http://testserver/peak/12",
+            },
+            {
+                "complete": True,
+                "name": "Administration energy.",
+                "pk": 13,
+                "url": "http://testserver/peak/13",
+            },
+            {
+                "complete": True,
+                "name": "Today.",
+                "pk": 14,
+                "url": "http://testserver/peak/14",
+            },
+            {
+                "complete": True,
+                "name": "Exactly without.",
+                "pk": 15,
+                "url": "http://testserver/peak/15",
+            },
+            {
+                "complete": True,
+                "name": "Adult.",
+                "pk": 16,
+                "url": "http://testserver/peak/16",
+            },
+        ]
+        assert computed_json == expected_json_as_py_object
 
 
 def test_about_view(rf):

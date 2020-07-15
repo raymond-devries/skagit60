@@ -1,9 +1,9 @@
-from django.db.models import Count, Min
+from django.db.models import Count, Min, F
 from skagit60 import settings
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     ListView,
     DetailView,
@@ -24,13 +24,41 @@ import os
 
 class Home(View):
     def get(self, request, *args, **kwargs):
+        all_peaks = Peak.objects.all()
+        completed_peaks = Peak.objects.filter(complete=True)
+        incomplete_peaks = Peak.objects.filter(complete=False)
+        most_recently_completed = (
+            Peak.objects.annotate(date=Min("tick__date"))
+            .filter(complete=True)
+            .order_by("-date")
+        )
+
         context = {
-            "peaks": serializers.serialize(
-                "json", Peak.objects.annotate(tick_date=Min("tick__date"))
+            "all_peaks": self.get_peaks_json(request, all_peaks),
+            "complete_peaks": self.get_peaks_json(request, completed_peaks),
+            "incomplete_peaks": self.get_peaks_json(request, incomplete_peaks),
+            "most_recently_completed": self.get_peaks_json(
+                request, most_recently_completed
             ),
-            "number_of_peaks_completed": Peak.objects.filter(complete=True).count(),
+            "number_of_peaks_completed": completed_peaks.count(),
         }
         return render(request, "tracker/home.html", context)
+
+    def get_peaks_json(self, request, query):
+        peaks = query
+        info = [
+            {
+                "url": request.build_absolute_uri(
+                    reverse("peak_detail", kwargs={"pk": peak.pk})
+                ),
+                "pk": peak.pk,
+                "name": peak.name,
+                "complete": peak.complete,
+            }
+            for peak in peaks
+        ]
+        peaks_json = json.dumps(info)
+        return peaks_json
 
 
 class About(TemplateView):
