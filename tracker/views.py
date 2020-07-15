@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Min
 from skagit60 import settings
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,22 +17,20 @@ from .forms import *
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.core import serializers
 import subprocess
 import os
 
 
-class Home(ListView):
-    model = Peak
-    template_name = "tracker/home.html"
-    context_object_name = "peaks"
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["number_of_peaks_completed"] = Peak.objects.filter(
-            complete=True
-        ).count()
-        return context
+class Home(View):
+    def get(self, request, *args, **kwargs):
+        context = {
+            "peaks": serializers.serialize(
+                "json", Peak.objects.annotate(tick_date=Min("tick__date"))
+            ),
+            "number_of_peaks_completed": Peak.objects.filter(complete=True).count(),
+        }
+        return render(request, "tracker/home.html", context)
 
 
 class About(TemplateView):
