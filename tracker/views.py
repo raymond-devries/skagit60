@@ -1,25 +1,28 @@
-from django.db.models import Count, Min, F
-from skagit60 import settings
 import json
+import os
+import subprocess
+
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
+from django.db.models import Count, F, Min
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import (
-    ListView,
-    DetailView,
     DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
     UpdateView,
     View,
-    TemplateView,
 )
+
+from skagit60 import settings
 from tracker.models import *
+
 from .forms import *
-from django.http import HttpResponse, Http404
-from django.utils.decorators import method_decorator
-from django.contrib.admin.views.decorators import staff_member_required
-from django.core import serializers
-import subprocess
-import os
 
 
 class Home(View):
@@ -27,19 +30,13 @@ class Home(View):
         all_peaks = Peak.objects.all()
         completed_peaks = Peak.objects.filter(complete=True)
         incomplete_peaks = Peak.objects.filter(complete=False)
-        most_recently_completed = (
-            Peak.objects.annotate(date=Min("tick__date"))
-            .filter(complete=True)
-            .order_by("-date")
-        )
+        most_recently_completed = Peak.objects.annotate(date=Min("tick__date")).filter(complete=True).order_by("-date")
 
         context = {
             "all_peaks": self.get_peaks_json(request, all_peaks),
             "complete_peaks": self.get_peaks_json(request, completed_peaks),
             "incomplete_peaks": self.get_peaks_json(request, incomplete_peaks),
-            "most_recently_completed": self.get_peaks_json(
-                request, most_recently_completed
-            ),
+            "most_recently_completed": self.get_peaks_json(request, most_recently_completed),
             "number_of_peaks_completed": completed_peaks.count(),
         }
         return render(request, "tracker/home.html", context)
@@ -48,9 +45,7 @@ class Home(View):
         peaks = query
         info = [
             {
-                "url": request.build_absolute_uri(
-                    reverse("peak_detail", kwargs={"pk": peak.pk})
-                ),
+                "url": request.build_absolute_uri(reverse("peak_detail", kwargs={"pk": peak.pk})),
                 "pk": peak.pk,
                 "name": peak.name,
                 "complete": peak.complete,
@@ -72,15 +67,11 @@ class PeakDetail(DetailView):
         context = super().get_context_data(**kwargs)
         context["ticks"] = self.get_ticks_json()
         context["interested_climbers"] = self.get_interested_climbers_json()
-        context["reports"] = TripReport.objects.filter(
-            peak=self.get_object(), published=True
-        )
+        context["reports"] = TripReport.objects.filter(peak=self.get_object(), published=True)
         return context
 
     def get_interested_climbers_json(self):
-        interested_climbers = InterestedClimber.objects.filter(
-            peak=self.get_object()
-        ).order_by("climber__first_name")
+        interested_climbers = InterestedClimber.objects.filter(peak=self.get_object()).order_by("climber__first_name")
         interested_climbers_list = []
         for climber in interested_climbers:
             interested_climbers_list.append(
@@ -133,9 +124,7 @@ class TripReportDetail(DetailView):
                 {
                     "id": comment.id,
                     "comment": comment.comment,
-                    "time": comment.time.strftime(
-                        settings.REST_FRAMEWORK["DATETIME_FORMAT"]
-                    ),
+                    "time": comment.time.strftime(settings.REST_FRAMEWORK["DATETIME_FORMAT"]),
                     "first_name": comment.user.first_name,
                     "last_name": comment.user.last_name,
                     "is_owner": comment.user == self.request.user,
@@ -184,9 +173,7 @@ class TripReportUpdate(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
         context["times"] = self.get_report_times_json(report)
-        context["time_choices"] = json.dumps(
-            ReportTime._meta.get_field("start_point").choices
-        )
+        context["time_choices"] = json.dumps(ReportTime._meta.get_field("start_point").choices)
 
         images, images_json = self.get_images(report)
         context["images"] = images_json
@@ -241,24 +228,3 @@ class TripReports(ListView):
     template_name = "tracker/trip_reports.html"
     context_object_name = "trip_reports"
     queryset = TripReport.objects.filter(published=True).order_by("-start")
-
-
-class LoaderVerification(View):
-    def get(self, request, *args, **kwargs):
-        context = {"token": settings.LOADER_VERIFICATION_TOKEN}
-        return render(request, "tracker/loader_verification.html", context)
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class Status(View):
-    def get(self, request, *args, **kwargs):
-        current_directory = os.getcwd()
-        command = (
-            f"goaccess {current_directory}/nginx/logs/access.log -a -o "
-            f"{current_directory}/templates/report.html --log-format=COMBINED"
-        )
-        subprocess.run(command, shell=True)
-        html_file_path = f"{current_directory}/templates/report.html"
-        with open(html_file_path) as file:
-            html = file.read()
-        return HttpResponse(html)

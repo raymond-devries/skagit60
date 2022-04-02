@@ -1,7 +1,16 @@
 # skagit60
 
-This is a deployed Django site at [skagit60.com](https://skagit60.com). The purpose of this site is to track and share the progress the [Skagit Alpine Club](https://skagitalpineclub.com) climbing 60 selected peaks. It uses Django and Django-rest for the backend and templates with Vue sprinkled in for the front end. Gunicorn is used for the WSGI server. This sits behind Nginx that acts as a reverse proxy and serves static files. This is all deployed in docker contatiners that are hosted on an AWS lightsail server.
+This is a deployed Django site at [skagit60.com](https://skagit60.com). The purpose of this site is to track and share the progress the [Skagit Alpine Club](https://skagitalpineclub.com) climbing 60 selected peaks. It uses Django and Django-rest for the backend and templates with Vue sprinkled in for the front end. Deployed on Heroku.
 
 Feel free to check out the code, provide any suggestions or submit a pull request.
 
 Thanks for checking out my project. 
+
+### Environment Variables
+* `ALLOWED_HOSTS` _comma separated list of strings, no spaces_
+* `DATABASE_URL` _string_
+* `DEBUG` _bool_
+* `EMAIL_HOST_PASSWORD` _string_
+* `EMAIL_HOST_USER` _string_
+* `SECRET_KEY` _string_
+* `USE_AWS_EMAIL` _bool_

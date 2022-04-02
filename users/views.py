@@ -1,16 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import View
+
+from tracker.models import InterestedClimber, Tick, TripReport
+
 from .forms import *
 from .tokens import account_activation_token
-from tracker.models import Tick, TripReport, InterestedClimber
 
 
 class CustomLogin(LoginView):
@@ -37,12 +39,8 @@ class Signup(View):
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": account_activation_token.make_token(user),
             }
-            text_message = render_to_string(
-                "registration/account_activation_email.txt", email_context
-            )
-            html_message = render_to_string(
-                "registration/account_activation_email.html", email_context
-            )
+            text_message = render_to_string("registration/account_activation_email.txt", email_context)
+            html_message = render_to_string("registration/account_activation_email.html", email_context)
             user.email_user(subject, text_message, html_message=html_message)
             return redirect("account_activation_sent")
 
@@ -61,7 +59,7 @@ class Activate(View):
         token = self.kwargs["token"]
 
         try:
-            uid = force_text(urlsafe_base64_decode(uib64))
+            uid = force_str(urlsafe_base64_decode(uib64))
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
@@ -107,9 +105,7 @@ class Profile(LoginRequiredMixin, View):
         )
 
     def delete_empty_trip_reports(self):
-        reports_to_delete = TripReport.objects.filter(
-            writer=self.request.user, start=None
-        )
+        reports_to_delete = TripReport.objects.filter(writer=self.request.user, start=None)
         reports_to_delete.delete()
 
 

@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from decouple import config, Csv
+from distutils.util import strtobool
+
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = strtobool(os.getenv("DEBUG", "False"))
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 INTERNAL_IPS = ["127.0.0.1"]
 
 # Application definition
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     "tracker",
     "users",
     "rest_framework",
+    "storages",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -80,12 +83,9 @@ WSGI_APPLICATION = "skagit60.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db/db.sqlite3"),
-    }
-}
+DATABASES = {"default": dj_database_url.parse(os.getenv("DATABASE_URL"))}
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -94,12 +94,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
-
-ADMINS = [(config("ADMIN_NAME"), config("ADMIN_EMAIL"))]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -121,10 +125,10 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAdminUser",],
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAdminUser",
+    ],
     "DATE_FORMAT": "%b %-d, %Y",
     "DATETIME_FORMAT": "%b %-d, %Y %-I:%M %p",
 }
@@ -133,23 +137,33 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 DEFAULT_FROM_EMAIL = "info@skagit60.com"
 
-USE_AWS_EMAIL = config("USE_AWS_EMAIL", cast=bool)
+USE_AWS_EMAIL = strtobool(os.getenv("USE_AWS_EMAIL", "False"))
 if USE_AWS_EMAIL:
     EMAIL_USE_TLS = True
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "email-smtp.us-west-2.amazonaws.com"
     EMAIL_PORT = 587
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-STATIC_URL = "/staticfiles/"
-# noinspection PyUnresolvedReferences
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-MEDIA_URL = "/mediafiles/"
-# noinspection PyUnresolvedReferences
-MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+if strtobool(os.getenv("USE_S#", "False")):
+    # aws settings
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_DEFAULT_ACL = None
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = "media"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+    DEFAULT_FILE_STORAGE = "skagit60.storage_backends.MediaStorage"
+else:
+    MEDIA_URL = "/mediafiles/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
-LOADER_VERIFICATION_TOKEN = config("LOADER_VERIFICATION_TOKEN")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/staticfiles/"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

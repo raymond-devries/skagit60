@@ -1,12 +1,11 @@
 db.sqlite3
-/venv
+venv
 /mediafiles
-/.env
-/.env.docker
+.env
+.env.docker
 production_env
 node_modules
-/staticfiles
 contacts.csv
 .idea
-/.coverage
+.coverage
 /templates/report.html

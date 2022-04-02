@@ -25,10 +25,4 @@ urlpatterns = [
     ),
     path("trip_reports", TripReports.as_view(), name="trip_reports"),
     path("leader_board", LeaderBoard.as_view(), name="leader_board"),
-    path("status", Status.as_view(), name="status"),
-    path(
-        "loaderio-ae015b95ea02363e914209fe5f684554",
-        LoaderVerification.as_view(),
-        name="loader_verification",
-    ),
 ]
