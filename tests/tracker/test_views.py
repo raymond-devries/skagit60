@@ -36,102 +36,22 @@ class TestHomeView:
         computed_json = view.get_peaks_json(view.request, Peak.objects.filter(complete=True))
         computed_json = json.loads(computed_json)
         expected_json_as_py_object = [
-            {
-                "complete": True,
-                "name": "Less husband.",
-                "pk": 1,
-                "url": "http://testserver/peak/1",
-            },
-            {
-                "complete": True,
-                "name": "Open.",
-                "pk": 2,
-                "url": "http://testserver/peak/2",
-            },
-            {
-                "complete": True,
-                "name": "Take Mrs.",
-                "pk": 3,
-                "url": "http://testserver/peak/3",
-            },
-            {
-                "complete": True,
-                "name": "My respond.",
-                "pk": 4,
-                "url": "http://testserver/peak/4",
-            },
-            {
-                "complete": True,
-                "name": "Result.",
-                "pk": 5,
-                "url": "http://testserver/peak/5",
-            },
-            {
-                "complete": True,
-                "name": "Southern.",
-                "pk": 6,
-                "url": "http://testserver/peak/6",
-            },
-            {
-                "complete": True,
-                "name": "Fund goal.",
-                "pk": 7,
-                "url": "http://testserver/peak/7",
-            },
-            {
-                "complete": True,
-                "name": "Value.",
-                "pk": 8,
-                "url": "http://testserver/peak/8",
-            },
-            {
-                "complete": True,
-                "name": "Consider.",
-                "pk": 9,
-                "url": "http://testserver/peak/9",
-            },
-            {
-                "complete": True,
-                "name": "Position stand.",
-                "pk": 10,
-                "url": "http://testserver/peak/10",
-            },
-            {
-                "complete": True,
-                "name": "Continue.",
-                "pk": 11,
-                "url": "http://testserver/peak/11",
-            },
-            {
-                "complete": True,
-                "name": "Course.",
-                "pk": 12,
-                "url": "http://testserver/peak/12",
-            },
-            {
-                "complete": True,
-                "name": "Administration energy.",
-                "pk": 13,
-                "url": "http://testserver/peak/13",
-            },
-            {
-                "complete": True,
-                "name": "Today.",
-                "pk": 14,
-                "url": "http://testserver/peak/14",
-            },
-            {
-                "complete": True,
-                "name": "Exactly without.",
-                "pk": 15,
-                "url": "http://testserver/peak/15",
-            },
-            {
-                "complete": True,
-                "name": "Adult.",
-                "pk": 16,
-                "url": "http://testserver/peak/16",
-            },
+            {"url": "http://testserver/peak/1", "pk": 1, "name": "Claim.", "complete": True},
+            {"url": "http://testserver/peak/2", "pk": 2, "name": "Since bring.", "complete": True},
+            {"url": "http://testserver/peak/3", "pk": 3, "name": "Reach.", "complete": True},
+            {"url": "http://testserver/peak/4", "pk": 4, "name": "Join also.", "complete": True},
+            {"url": "http://testserver/peak/5", "pk": 5, "name": "Sometimes.", "complete": True},
+            {"url": "http://testserver/peak/6", "pk": 6, "name": "Himself anyone.", "complete": True},
+            {"url": "http://testserver/peak/7", "pk": 7, "name": "Once deep.", "complete": True},
+            {"url": "http://testserver/peak/8", "pk": 8, "name": "Number.", "complete": True},
+            {"url": "http://testserver/peak/9", "pk": 9, "name": "Score quality.", "complete": True},
+            {"url": "http://testserver/peak/10", "pk": 10, "name": "Subject.", "complete": True},
+            {"url": "http://testserver/peak/11", "pk": 11, "name": "The various.", "complete": True},
+            {"url": "http://testserver/peak/12", "pk": 12, "name": "Someone.", "complete": True},
+            {"url": "http://testserver/peak/13", "pk": 13, "name": "Star arm.", "complete": True},
+            {"url": "http://testserver/peak/14", "pk": 14, "name": "Least.", "complete": True},
+            {"url": "http://testserver/peak/15", "pk": 15, "name": "Bad international.", "complete": True},
+            {"url": "http://testserver/peak/16", "pk": 16, "name": "Traditional.", "complete": True},
         ]
         assert computed_json == expected_json_as_py_object
 
@@ -464,19 +384,3 @@ class TestTripReportsView:
 
     def test_trip_reports_queryset(self, setup_trip_reports_view):
         assert setup_trip_reports_view.queryset.count() == 6
-
-
-def test_loader_verification_view(rf):
-    path = reverse("loader_verification")
-    request = rf.get(path)
-    response = About.as_view()(request)
-
-    assert response.status_code == 200
-
-
-def test_status_view(rf):
-    path = reverse("status")
-    request = rf.get(path)
-    response = About.as_view()(request)
-
-    assert response.status_code == 200

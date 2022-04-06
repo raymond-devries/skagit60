@@ -39,8 +39,3 @@ def test_trip_report_delete_url():
 def test_leader_board_url():
     path = reverse("leader_board")
     assert resolve(path).view_name == "leader_board"
-
-
-def test_loader_verification_url():
-    path = reverse("loader_verification")
-    assert resolve(path).view_name == "loader_verification"

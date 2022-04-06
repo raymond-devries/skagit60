@@ -1,5 +1,6 @@
 import factory.random
-from factory import DjangoModelFactory, Faker, SubFactory, django
+from factory import Faker, SubFactory, django
+from factory.django import DjangoModelFactory
 
 from tracker.models import *
 
