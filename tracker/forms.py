@@ -1,4 +1,5 @@
-from django.forms import ModelForm, DateField, DateInput, Textarea, CharField
+from django.forms import CharField, DateField, DateInput, ModelForm, Textarea
+
 from .models import TripReport
 
 

@@ -1,22 +1,23 @@
-from django.core.exceptions import ValidationError
-from django.forms import EmailField, CharField
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserChangeForm,
+    UserCreationForm,
+    UsernameField,
+)
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, UsernameField
-from .models import ValidEmail
-from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
+from django.forms import CharField, EmailField
 from django.forms.widgets import TextInput
+
+from .models import ValidEmail
 
 
 class CustomAuthForm(AuthenticationForm):
-    username = UsernameField(
-        widget=TextInput(attrs={"autofocus": True}), label="Username or Email"
-    )
+    username = UsernameField(widget=TextInput(attrs={"autofocus": True}), label="Username or Email")
 
 
 class SignupForm(UserCreationForm):
-    email = EmailField(
-        max_length=254, help_text="Please provide the email address SAC has on file."
-    )
+    email = EmailField(max_length=254, help_text="Please provide the email address SAC has on file.")
     first_name = CharField(max_length=50)
     last_name = CharField(max_length=50)
 

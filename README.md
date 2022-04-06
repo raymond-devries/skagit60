@@ -8,9 +8,13 @@ Thanks for checking out my project.
 
 ### Environment Variables
 * `ALLOWED_HOSTS` _comma separated list of strings, no spaces_
+* `AWS_ACCESS_KEY_ID` _string_
+* `AWS_SECRET_ACCESS_KEY` _string_
+* `AWS_STORAGE_BUCKET_NAME` _string_
 * `DATABASE_URL` _string_
 * `DEBUG` _bool_
 * `EMAIL_HOST_PASSWORD` _string_
 * `EMAIL_HOST_USER` _string_
 * `SECRET_KEY` _string_
 * `USE_AWS_EMAIL` _bool_
+* `USE_S3` _bool_

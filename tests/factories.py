@@ -1,5 +1,6 @@
-from factory import DjangoModelFactory, Faker, SubFactory, django
 import factory.random
+from factory import DjangoModelFactory, Faker, SubFactory, django
+
 from tracker.models import *
 
 factory.random.reseed_random("skagit60")

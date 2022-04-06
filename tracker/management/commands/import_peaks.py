@@ -1,7 +1,9 @@
+from os.path import dirname
+
 import pandas as pd
 from django.core.management.base import BaseCommand
+
 from tracker.models import Peak
-from os.path import dirname
 
 
 class Command(BaseCommand):

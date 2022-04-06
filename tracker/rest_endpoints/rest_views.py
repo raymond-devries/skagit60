@@ -1,6 +1,7 @@
-from rest_framework.viewsets import ModelViewSet
-from .serializers import *
 from rest_framework.permissions import BasePermission
+from rest_framework.viewsets import ModelViewSet
+
+from .serializers import *
 
 
 class LinkedTripReportPermission(BasePermission):

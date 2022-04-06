@@ -1,4 +1,5 @@
 import pytest
+
 from tests.factories import *
 
 pytestmark = pytest.mark.django_db
@@ -48,6 +49,4 @@ def test_interest_peak_only_once():
 def test_image_validation_too_many_images():
     trip_report = TripReportFactory()
     with pytest.raises(ValidationError):
-        ReportImageFactory.create_batch(
-            TripReport.max_images + 1, trip_report=trip_report
-        )
+        ReportImageFactory.create_batch(TripReport.max_images + 1, trip_report=trip_report)
