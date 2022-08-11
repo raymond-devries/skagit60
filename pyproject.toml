@@ -7,7 +7,7 @@ license = "A site for tracking trip reports."
 
 [tool.poetry.dependencies]
 python = "^3.9"
-Django = "^4.0.3"
+Django = "^4.0.7"
 django-cleanup = "^6.0.0"
 django-crispy-forms = "^1.14.0"
 djangorestframework = "^3.13.1"
