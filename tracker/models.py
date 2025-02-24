@@ -29,7 +29,13 @@ class Tick(models.Model):
     date = models.DateField(help_text="The date you summited the peak.")
 
     def __str__(self):
-        return self.climber.first_name + " " + self.climber.last_name + ", " + str(self.peak)
+        return (
+            self.climber.first_name
+            + " "
+            + self.climber.last_name
+            + ", "
+            + str(self.peak)
+        )
 
 
 @receiver(pre_save, sender=Tick)
@@ -60,7 +66,9 @@ class InterestedClimber(models.Model):
 @receiver(pre_save, sender=InterestedClimber)
 def interest_peak_only_once(sender, instance, **kwargs):
     if sender.objects.filter(climber=instance.climber, peak=instance.peak).exists():
-        raise ValidationError("A climber can only be interested in a particular peak once")
+        raise ValidationError(
+            "A climber can only be interested in a particular peak once"
+        )
 
 
 class TripReport(models.Model):
@@ -75,9 +83,15 @@ class TripReport(models.Model):
     end = models.DateField(null=True, blank=True)
     difficulty = models.IntegerField(choices=difficulty_choices, default=1)
     route_name = models.CharField(max_length=150, null=True, blank=True)
-    snow_level = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
-    elevation_gain = models.PositiveIntegerField(validators=[MaxValueValidator(15000)], null=True, blank=True)
-    total_miles = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True)
+    snow_level = models.PositiveIntegerField(
+        validators=[MaxValueValidator(15000)], null=True, blank=True
+    )
+    elevation_gain = models.PositiveIntegerField(
+        validators=[MaxValueValidator(15000)], null=True, blank=True
+    )
+    total_miles = models.DecimalField(
+        decimal_places=2, max_digits=4, null=True, blank=True
+    )
     weather = models.TextField(null=True, blank=True)
     gear = models.TextField(null=True, blank=True)
     report = models.TextField(null=True, blank=True)
@@ -101,7 +115,10 @@ class ReportImage(models.Model):
 
 @receiver(pre_save, sender=ReportImage)
 def image_validation(sender, instance, **kwargs):
-    if sender.objects.filter(trip_report=instance.trip_report).count() >= TripReport.max_images:
+    if (
+        sender.objects.filter(trip_report=instance.trip_report).count()
+        >= TripReport.max_images
+    ):
         raise ValidationError("No more images allowed")
     if instance.image.size > 5242880:
         raise ValidationError("The image is more than 5mb")

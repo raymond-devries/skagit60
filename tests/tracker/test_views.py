@@ -33,25 +33,107 @@ class TestHomeView:
 
     def test_home_view_number_of_peaks_completed(self, setup_home_view):
         view = setup_home_view
-        computed_json = view.get_peaks_json(view.request, Peak.objects.filter(complete=True))
+        computed_json = view.get_peaks_json(
+            view.request, Peak.objects.filter(complete=True)
+        )
         computed_json = json.loads(computed_json)
         expected_json_as_py_object = [
-            {"url": "http://testserver/peak/1", "pk": 1, "name": "Claim.", "complete": True},
-            {"url": "http://testserver/peak/2", "pk": 2, "name": "Since bring.", "complete": True},
-            {"url": "http://testserver/peak/3", "pk": 3, "name": "Reach.", "complete": True},
-            {"url": "http://testserver/peak/4", "pk": 4, "name": "Join also.", "complete": True},
-            {"url": "http://testserver/peak/5", "pk": 5, "name": "Sometimes.", "complete": True},
-            {"url": "http://testserver/peak/6", "pk": 6, "name": "Himself anyone.", "complete": True},
-            {"url": "http://testserver/peak/7", "pk": 7, "name": "Once deep.", "complete": True},
-            {"url": "http://testserver/peak/8", "pk": 8, "name": "Number.", "complete": True},
-            {"url": "http://testserver/peak/9", "pk": 9, "name": "Score quality.", "complete": True},
-            {"url": "http://testserver/peak/10", "pk": 10, "name": "Subject.", "complete": True},
-            {"url": "http://testserver/peak/11", "pk": 11, "name": "The various.", "complete": True},
-            {"url": "http://testserver/peak/12", "pk": 12, "name": "Someone.", "complete": True},
-            {"url": "http://testserver/peak/13", "pk": 13, "name": "Star arm.", "complete": True},
-            {"url": "http://testserver/peak/14", "pk": 14, "name": "Least.", "complete": True},
-            {"url": "http://testserver/peak/15", "pk": 15, "name": "Bad international.", "complete": True},
-            {"url": "http://testserver/peak/16", "pk": 16, "name": "Traditional.", "complete": True},
+            {
+                "url": "http://testserver/peak/1",
+                "pk": 1,
+                "name": "Claim.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/2",
+                "pk": 2,
+                "name": "Since bring.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/3",
+                "pk": 3,
+                "name": "Reach.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/4",
+                "pk": 4,
+                "name": "Join also.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/5",
+                "pk": 5,
+                "name": "Sometimes.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/6",
+                "pk": 6,
+                "name": "Himself anyone.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/7",
+                "pk": 7,
+                "name": "Once deep.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/8",
+                "pk": 8,
+                "name": "Number.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/9",
+                "pk": 9,
+                "name": "Score quality.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/10",
+                "pk": 10,
+                "name": "Subject.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/11",
+                "pk": 11,
+                "name": "The various.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/12",
+                "pk": 12,
+                "name": "Someone.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/13",
+                "pk": 13,
+                "name": "Star arm.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/14",
+                "pk": 14,
+                "name": "Least.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/15",
+                "pk": 15,
+                "name": "Bad international.",
+                "complete": True,
+            },
+            {
+                "url": "http://testserver/peak/16",
+                "pk": 16,
+                "name": "Traditional.",
+                "complete": True,
+            },
         ]
         assert computed_json == expected_json_as_py_object
 
@@ -73,7 +155,9 @@ class TestPeakDetailView:
         InterestedClimberFactory(pk=567, climber=climber, peak=peak)
         InterestedClimberFactory(pk=219, climber=climber2, peak=peak)
         TickFactory(pk=6788, date=datetime.date(2020, 9, 6), peak=peak, climber=climber)
-        TickFactory(pk=920, date=datetime.date(2020, 6, 17), peak=peak, climber=climber2)
+        TickFactory(
+            pk=920, date=datetime.date(2020, 6, 17), peak=peak, climber=climber2
+        )
         TripReportFactory(pk=543, peak=peak)
 
         path = reverse("peak_detail", kwargs={"pk": 1})
@@ -96,7 +180,9 @@ class TestPeakDetailView:
         assert context["ticks"] == expected_tick_context
 
     def test_peak_detail_interested_climbers_context(self, setup_peak_detail_view):
-        expected_interested_climber_context = setup_peak_detail_view.get_interested_climbers_json()
+        expected_interested_climber_context = (
+            setup_peak_detail_view.get_interested_climbers_json()
+        )
         context = setup_peak_detail_view.get_context_data()
         assert context["interested_climbers"] == expected_interested_climber_context
 
@@ -123,14 +209,18 @@ class TestPeakDetailView:
         expected_json_as_py_object = [
             {
                 "id": 6788,
-                "date": datetime.date(2020, 9, 6).strftime(settings.REST_FRAMEWORK["DATE_FORMAT"]),
+                "date": datetime.date(2020, 9, 6).strftime(
+                    settings.REST_FRAMEWORK["DATE_FORMAT"]
+                ),
                 "first_name": "Anna",
                 "last_name": "Smith",
                 "is_owner": False,
             },
             {
                 "id": 920,
-                "date": datetime.date(2020, 6, 17).strftime(settings.REST_FRAMEWORK["DATE_FORMAT"]),
+                "date": datetime.date(2020, 6, 17).strftime(
+                    settings.REST_FRAMEWORK["DATE_FORMAT"]
+                ),
                 "first_name": "Bob",
                 "last_name": "Johnson",
                 "is_owner": False,
@@ -143,17 +233,23 @@ class TestPeakDetailView:
 class TestTripReportDetailView:
     @pytest.fixture
     def setup_trip_report_detail_view(self, rf):
-        trip_report = TripReportFactory(pk=1, start=datetime.date(2020, 2, 6), end=datetime.date(2020, 2, 7))
+        trip_report = TripReportFactory(
+            pk=1, start=datetime.date(2020, 2, 6), end=datetime.date(2020, 2, 7)
+        )
         user1 = UserFactory(first_name="Chris", last_name="Sharma")
         user2 = UserFactory(first_name="Adam", last_name="Ondra")
         ReportImageFactory(pk=1, trip_report=trip_report)
         ReportImageFactory(pk=2, trip_report=trip_report)
         ReportTimeFactory(pk=1, trip_report=trip_report)
         ReportTimeFactory(pk=2, trip_report=trip_report)
-        comment1 = ReportCommentFactory(pk=739, trip_report=trip_report, comment="Wow that is great", user=user1)
+        comment1 = ReportCommentFactory(
+            pk=739, trip_report=trip_report, comment="Wow that is great", user=user1
+        )
         comment1.time = datetime.datetime(2020, 3, 5, 8, 0, 0)
         comment1.save()
-        comment2 = ReportCommentFactory(pk=274, trip_report=trip_report, comment="Way to send it!", user=user2)
+        comment2 = ReportCommentFactory(
+            pk=274, trip_report=trip_report, comment="Way to send it!", user=user2
+        )
         comment2.time = datetime.datetime(2020, 3, 5, 7, 0, 0)
         comment2.save()
 
@@ -171,18 +267,24 @@ class TestTripReportDetailView:
     def test_peak_detail_view_status_code(self, setup_trip_report_detail_view):
         assert setup_trip_report_detail_view.response_class.status_code == 200
 
-    def test_peak_detail_show_end_context_end_date_different(self, setup_trip_report_detail_view):
+    def test_peak_detail_show_end_context_end_date_different(
+        self, setup_trip_report_detail_view
+    ):
         context = setup_trip_report_detail_view.get_context_data()
         assert context["show_end"] is True
 
-    def test_peak_detail_show_end_context_end_date_none(self, setup_trip_report_detail_view):
+    def test_peak_detail_show_end_context_end_date_none(
+        self, setup_trip_report_detail_view
+    ):
         trip_report = TripReport.objects.get(pk=1)
         trip_report.end = None
         trip_report.save()
         context = setup_trip_report_detail_view.get_context_data()
         assert context["show_end"] is False
 
-    def test_peak_detail_show_end_context_end_date_same_as_start(self, setup_trip_report_detail_view):
+    def test_peak_detail_show_end_context_end_date_same_as_start(
+        self, setup_trip_report_detail_view
+    ):
         trip_report = TripReport.objects.get(pk=1)
         trip_report.end = datetime.date(2020, 2, 6)
         trip_report.save()
@@ -208,7 +310,9 @@ class TestTripReportDetailView:
             {
                 "id": 739,
                 "comment": "Wow that is great",
-                "time": datetime.datetime(2020, 3, 5, 16, 0, 0).strftime(settings.REST_FRAMEWORK["DATETIME_FORMAT"]),
+                "time": datetime.datetime(2020, 3, 5, 16, 0, 0).strftime(
+                    settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+                ),
                 "first_name": "Chris",
                 "last_name": "Sharma",
                 "is_owner": False,
@@ -216,7 +320,9 @@ class TestTripReportDetailView:
             {
                 "id": 274,
                 "comment": "Way to send it!",
-                "time": datetime.datetime(2020, 3, 5, 15, 0, 0).strftime(settings.REST_FRAMEWORK["DATETIME_FORMAT"]),
+                "time": datetime.datetime(2020, 3, 5, 15, 0, 0).strftime(
+                    settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+                ),
                 "first_name": "Adam",
                 "last_name": "Ondra",
                 "is_owner": False,
@@ -278,13 +384,17 @@ class TestTripReportUpdate:
     def test_trip_report_update_status_code(self, setup_trip_report_update_view):
         assert setup_trip_report_update_view.response_class.status_code == 200
 
-    def test_trip_report_update_form_valid_not_published(self, setup_trip_report_update_view):
+    def test_trip_report_update_form_valid_not_published(
+        self, setup_trip_report_update_view
+    ):
         form = setup_trip_report_update_view.get_form()
         setup_trip_report_update_view.form_valid(form)
 
         assert setup_trip_report_update_view.get_object().published is False
 
-    def test_trip_report_update_form_valid_published(self, setup_trip_report_update_view):
+    def test_trip_report_update_form_valid_published(
+        self, setup_trip_report_update_view
+    ):
         form = setup_trip_report_update_view.get_form()
         post_request = setup_trip_report_update_view.request.POST
         post_request._mutable = True
@@ -293,7 +403,9 @@ class TestTripReportUpdate:
 
         assert setup_trip_report_update_view.get_object().published is True
 
-    def test_trip_report_update_get_context_max_images(self, setup_trip_report_update_view):
+    def test_trip_report_update_get_context_max_images(
+        self, setup_trip_report_update_view
+    ):
         context = setup_trip_report_update_view.get_context_data()
         assert context["max_uploads"] == TripReport.max_images - 2
 
@@ -312,7 +424,9 @@ class TestTripReportUpdate:
         assert list(response_images) == list(expected_images)
         assert json.loads(response_images_json) == expected_json_as_py_object
 
-    def test_trip_report_update_get_report_times_json(self, setup_trip_report_update_view):
+    def test_trip_report_update_get_report_times_json(
+        self, setup_trip_report_update_view
+    ):
         report = setup_trip_report_update_view.get_object()
         time1 = ReportTime.objects.get(pk=1)
         time2 = ReportTime.objects.get(pk=2)

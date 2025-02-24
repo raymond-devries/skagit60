@@ -13,11 +13,15 @@ from .models import ValidEmail
 
 
 class CustomAuthForm(AuthenticationForm):
-    username = UsernameField(widget=TextInput(attrs={"autofocus": True}), label="Username or Email")
+    username = UsernameField(
+        widget=TextInput(attrs={"autofocus": True}), label="Username or Email"
+    )
 
 
 class SignupForm(UserCreationForm):
-    email = EmailField(max_length=254, help_text="Please provide the email address SAC has on file.")
+    email = EmailField(
+        max_length=254, help_text="Please provide the email address SAC has on file."
+    )
     first_name = CharField(max_length=50)
     last_name = CharField(max_length=50)
 
