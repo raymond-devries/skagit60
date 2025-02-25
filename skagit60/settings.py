@@ -10,26 +10,36 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import json
 import os
+
+import boto3
 from distutils.util import strtobool
 
 import dj_database_url
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+ENV_SECRETS_ID = os.environ["AWS_SECRETS_CONFIG_NAME"]
+AWS_REGION = "us-west-2"
+aws_session = boto3.session.Session()
+client = aws_session.client(
+    service_name="secretsmanager",
+    region_name=AWS_REGION,
+)
+env_secrets = json.loads(
+    client.get_secret_value(SecretId=ENV_SECRETS_ID)["SecretString"]
+)
+os.environ.update(env_secrets)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = strtobool(os.getenv("DEBUG", "False"))
 
-SECURE_SSL_REDIRECT = not DEBUG
-
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+if DEBUG:
+    ALLOWED_HOSTS.append("127.0.0.1")
 INTERNAL_IPS = ["127.0.0.1"]
 
 # Application definition
@@ -42,11 +52,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
+    "crispy_bootstrap4",
     "tracker",
     "users",
     "rest_framework",
     "storages",
     "django_cleanup.apps.CleanupConfig",
+    "django_extensions"
 ]
 
 MIDDLEWARE = [
@@ -80,13 +92,17 @@ TEMPLATES = [
     },
 ]
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
 WSGI_APPLICATION = "skagit60.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASES = {"default": dj_database_url.parse(os.getenv("DATABASE_URL"))}
+DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -128,7 +144,9 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAdminUser",
     ],
@@ -136,12 +154,9 @@ REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%b %-d, %Y %-I:%M %p",
 }
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
-
 DEFAULT_FROM_EMAIL = "info@skagit60.com"
 
-USE_AWS_EMAIL = strtobool(os.getenv("USE_AWS_EMAIL", "False"))
-if USE_AWS_EMAIL:
+if not DEBUG:
     EMAIL_USE_TLS = True
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "email-smtp.us-west-2.amazonaws.com"
@@ -151,23 +166,30 @@ if USE_AWS_EMAIL:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-if strtobool(os.getenv("USE_S3", "False")):
-    # aws settings
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-    AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
-    # s3 public media settings
-    PUBLIC_MEDIA_LOCATION = "media"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-    DEFAULT_FILE_STORAGE = "skagit60.storage_backends.MediaStorage"
-else:
+if DEBUG:
     MEDIA_URL = "/mediafiles/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = "/staticfiles/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
+
+if not DEBUG:
+    STORAGES = {
+        "default": {
+            "BACKEND": "skagit60.storage_backends.MediaStorage",
+            "OPTIONS": {
+                "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+                "object_parameters": {"CacheControl": "max-age=86400"},
+            }
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "bucket_name": os.getenv("STATIC_FILES_BUCKET_NAME"),
+            },
+        },
+    }
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATIC_URL = "/static/"
+
+DB_BACKUP_BUCKET = os.getenv("DB_BACKUP_BUCKET")

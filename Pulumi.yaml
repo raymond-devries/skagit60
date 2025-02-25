@@ -1,0 +1,9 @@
+name: skagit-60
+description: A site for tracking trip reports.
+runtime:
+  name: python
+  options:
+    toolchain: uv
+config:
+  aws:region: us-west-2
+  supabase-slug: yphuiafofyfhykyfpjfg

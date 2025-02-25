@@ -1,0 +1,4 @@
+config:
+  skagit-60:domain_name: "www.skagit60.com"
+  supabase:accessToken:
+    secure: AAABAFSFNgN/OaK/bhdHXgH05gwk7yB/s8pYc13V9Kd5ZYUrHSOlXvjlHiBsm035qSEsYqvqH4f2XjLERxoEOkhIVDJFh/7lojzlUg==
