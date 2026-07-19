@@ -3,7 +3,7 @@ name = "skagit60"
 version = "0.1.0"
 description = "A site for tracking trip reports."
 authors = [{ name = "Your Name", email = "you@example.com" }]
-requires-python = "~=3.9"
+requires-python = "~=3.13.0"
 license = "MIT"
 dependencies = [
     "Django",
@@ -30,12 +30,12 @@ dev = [
     "pytest-xdist>=2.5.0,<3",
     "factory-boy>=3.2.1,<4",
     "coverage>=6.3.2,<7",
-    "pulumi>=3.152.0",
-    "pulumi-aws>=6.69.0",
+    "pulumi",
+    "pulumi-aws",
     "pre-commit>=4.1.0",
-    "pulumi-awsx>=2.21.0",
-    "pulumi-command>=1.0.2",
-    "pulumi-random>=4.17.0",
+    "pulumi-awsx",
+    "pulumi-command",
+    "pulumi-random",
     # Add with `pulumi package add terraform-provider supabase/supabase`
     "pulumi-supabase",
     "httpx>=0.28.1",

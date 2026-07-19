@@ -13,7 +13,7 @@ extras = {"AWS_STORAGE_BUCKET_NAME": "skagit60-media"}
 
 project_slug = "skagit60"
 artifacts = build_stack(
-    project_slug, project_slug, None, extras, "lambda.Dockerfile"
+    project_slug, None, extras, "lambda.Dockerfile"
 )
 
 
